@@ -10,13 +10,24 @@ body {
   height: 100vh;
   margin: 0;
   font-family: sans-serif;
+  font-size: 16px; /* Базовый размер шрифта для больших экранов */
 }
+
+/* Медиа-запрос для телефонов (максимальная ширина 768px) */
+@media (max-width: 768px) {
+  body {
+    font-size: 20px; /* Увеличенный размер шрифта для телефонов */
+  }
+  button {
+      font-size: 20px; /*Увеличенный размер шрифта для кнопки*/
+  }
+}
+
 .container {
   text-align: center;
 }
 button {
   padding: 10px 20px;
-  font-size: 16px;
   cursor: pointer;
 }
 </style>
@@ -25,7 +36,7 @@ button {
 <div class="container">
   <h1>Произошла ошибка!</h1>
   <p>Пожалуйста, попробуйте позже.</p>
-  <audio id="myAudio" src="jutkiy-krik.mp3" loop></audio>  <!-- Добавлен атрибут loop -->
+  <audio id="myAudio" src="jutkiy-krik.mp3" loop></audio>
   <button id="playAudio">ОК</button>
 </div>
 
@@ -40,5 +51,4 @@ playButton.addEventListener("click", () => {
 
 </body>
 </html>
-
 
