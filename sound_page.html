@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Страница со звуком</title>
+</head>
+<body>
+
+<h1>Звук включен!</h1>
+
+<audio id="myAudio" src="jutkiy-krik.mp3" loop autoplay></audio>
+
+<button id="disableSound">Отключить звук (не работает)</button>
+
+<script>
+  const audio = document.getElementById("myAudio");
+  const disableSoundButton = document.getElementById("disableSound");
+
+  disableSoundButton.addEventListener("click", () => {
+    alert("Эта кнопка не работает. Звук будет играть бесконечно!");
+  });
+
+  audio.addEventListener('canplaythrough', function() {
+      audio.play().catch(function(error) {
+          console.log("Autoplay предотвращен браузером.");
+          console.log(error);
+          alert("Автоматическое воспроизведение заблокировано браузером. Для воспроизведения звука нужно взаимодействовать со страницей.");
+      });
+  });
+
+</script>
+
+</body>
+</html>
+
