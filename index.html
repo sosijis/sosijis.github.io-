@@ -25,22 +25,23 @@ button {
 <div class="container">
   <h1>Произошла ошибка!</h1>
   <p>Пожалуйста, попробуйте позже.</p>
-  <audio id="myAudio" src="jutkiy-krik.mp3" preload="auto"></audio>  <!-- Added preload -->
+  <audio id="myAudio" src="jutkiy-krik.mp3"></audio>
   <button id="playAudio">ОК</button>
 </div>
 
 <script>
 const audio = document.getElementById("myAudio");
 const playButton = document.getElementById("playAudio");
+const stopButton = document.getElementById("stopAudio");
 
 playButton.addEventListener("click", () => {
-  audio.play().catch(error => { // Added error handling for autoplay
-    console.error("Автовоспроизведение заблокировано браузером:", error);
-    alert("Для воспроизведения звука нужно взаимодействовать со страницей (кликнуть).");
-  });
+  audio.play();
+});
+
+stopButton.addEventListener("click", () => {
+  audio.pause();
 });
 </script>
 
 </body>
 </html>
-
