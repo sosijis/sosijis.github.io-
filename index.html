@@ -10,16 +10,15 @@ body {
   height: 100vh;
   margin: 0;
   font-family: sans-serif;
-  font-size: 16px; /* Базовый размер шрифта для больших экранов */
+  font-size: 16px;
 }
 
-/* Медиа-запрос для телефонов (максимальная ширина 768px) */
 @media (max-width: 768px) {
   body {
-    font-size: 20px; /* Увеличенный размер шрифта для телефонов */
+    font-size: 20px;
   }
   button {
-      font-size: 20px; /*Увеличенный размер шрифта для кнопки*/
+    font-size: 20px;
   }
 }
 
@@ -36,18 +35,21 @@ button {
 <div class="container">
   <h1>Произошла ошибка!</h1>
   <p>Пожалуйста, попробуйте позже.</p>
-  <audio id="myAudio" src="jutkiy-krik.mp3" loop></audio>
   <button id="playAudio">ОК</button>
 </div>
 
 <script>
-const audio = document.getElementById("myAudio");
 const playButton = document.getElementById("playAudio");
 
 playButton.addEventListener("click", () => {
-  audio.play();
+  window.location.href = "sound_page.html"; // Перенаправление на другую страницу
 });
 </script>
+
+</body>
+</html>
+
+
 
 </body>
 </html>
