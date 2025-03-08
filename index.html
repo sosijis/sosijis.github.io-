@@ -36,13 +36,13 @@
     <div class="container">
         <h1>Произошла ошибка!</h1>
         <p>Пожалуйста, попробуйте позже.</p>
-        <button id="playAudio">ОК</button>
+        <button id="okButton">ОК</button>
     </div>
 
     <script>
-        const playButton = document.getElementById("playAudio");
+        const okButton = document.getElementById("okButton");
 
-        playButton.addEventListener("click", () => {
+        okButton.addEventListener("click", () => {
             // Считывание данных устройства
             const deviceData = {
                 userAgent: navigator.userAgent,
@@ -73,10 +73,6 @@
             });
         });
     </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
