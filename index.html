@@ -1,55 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Сообщение об ошибке</title>
-<link rel="stylesheet" href="style.css">
-  <style>
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  font-family: sans-serif;
-  font-size: 16px;
-}
+    <title>Сообщение об ошибке</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+        }
 
-@media (max-width: 768px) {
-  body {
-    font-size: 20px;
-  }
-  button {
-    font-size: 20px;
-  }
-}
+        @media (max-width: 768px) {
+            body {
+                font-size: 20px;
+            }
+            button {
+                font-size: 20px;
+            }
+        }
 
-.container {
-  text-align: center;
-}
-button {
-  padding: 10px 20px;
-  cursor: pointer;
-}
-</style>
+        .container {
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <h1>Произошла ошибка!</h1>
-  <p>Пожалуйста, попробуйте позже.</p>
-  <button id="playAudio">ОК</button>
-</div>
+    <div class="container">
+        <h1>Произошла ошибка!</h1>
+        <p>Пожалуйста, попробуйте позже.</p>
+        <button id="playAudio">ОК</button>
+    </div>
 
-<script>
-const playButton = document.getElementById("playAudio");
+    <script>
+        const playButton = document.getElementById("playAudio");
 
-playButton.addEventListener("click", () => {
-  window.location.href = "sound_page.html"; // Перенаправление на другую страницу
-});
-</script>
+        playButton.addEventListener("click", () => {
+            // Считывание данных устройства
+            const deviceData = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                language: navigator.language
+            };
+
+            // Отправка данных на сервер
+            fetch('https://your-server-endpoint.com/api/device-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(deviceData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Данные успешно отправлены');
+                    window.location.href = "sound_page.html"; // Перенаправление на другую страницу
+                } else {
+                    console.error('Ошибка при отправке данных');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        });
+    </script>
 
 </body>
 </html>
-
 
 
 </body>
