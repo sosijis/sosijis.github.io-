@@ -15,7 +15,7 @@ app.post('/api/device-data', (req, res) => {
     res.status(200).send('Данные успешно получены');
 });
 
-// Запуск сервера - исправленная строка
+// Запуск сервера
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
+    console.log(`Сервер запущен на http://localhost:${PORT}`); // Используем обратные кавычки для интерполяции
 });
