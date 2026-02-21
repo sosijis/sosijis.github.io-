@@ -1,79 +1,482 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ru">
 <head>
-    <title>Сообщение об ошибке</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Гарем Юно — регистрация</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: sans-serif;
-            font-size: 16px;
+        :root{
+            --bg1:#0b0b14;
+            --bg2:#121229;
+            --card:#121225cc;
+            --stroke:#ffffff1a;
+            --text:#f7f7ff;
+            --muted:#c9c9e6;
+            --accent:#b38bff;
+            --accent2:#57d2ff;
+            --danger:#ff5a7a;
+            --ok:#3dffb5;
+            --shadow: 0 20px 60px rgba(0,0,0,.55);
+            --r: 22px;
+            --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue";
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            font-family:var(--font);
+            color:var(--text);
+            min-height:100vh;
+            background:
+                    radial-gradient(1200px 800px at 20% 20%, rgba(179,139,255,.25), transparent 60%),
+                    radial-gradient(900px 700px at 80% 30%, rgba(87,210,255,.20), transparent 55%),
+                    radial-gradient(900px 700px at 50% 90%, rgba(255,90,122,.12), transparent 55%),
+                    linear-gradient(180deg, var(--bg1), var(--bg2));
+            display:grid;
+            place-items:center;
+            padding:28px;
+            overflow-x:hidden;
         }
 
-        @media (max-width: 768px) {
-            body {
-                font-size: 20px;
-            }
-            button {
-                font-size: 20px;
-            }
+        .wrap{
+            width:min(980px, 100%);
+            display:grid;
+            gap:18px;
+            position:relative;
         }
 
-        .container {
-            text-align: center;
+        .topbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            padding:14px 16px;
+            border:1px solid var(--stroke);
+            border-radius:16px;
+            background:rgba(255,255,255,.04);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,.25);
         }
-        button {
-            padding: 10px 20px;
-            cursor: pointer;
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            min-width:0;
+        }
+        .logo{
+            width:34px;height:34px;border-radius:12px;
+            background:
+                    radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.8), transparent 60%),
+                    linear-gradient(135deg, var(--accent), var(--accent2));
+            box-shadow: 0 10px 30px rgba(179,139,255,.25);
+            border:1px solid rgba(255,255,255,.16);
+            flex:0 0 auto;
+        }
+        .brand h1{
+            font-size:14px;
+            margin:0;
+            letter-spacing:.5px;
+            font-weight:750;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+        .pill{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:10px 12px;
+            border-radius:999px;
+            border:1px solid var(--stroke);
+            background:rgba(255,255,255,.04);
+            font-size:13px;
+            color:var(--muted);
+            white-space:nowrap;
+        }
+        .dot{
+            width:8px;height:8px;border-radius:50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), transparent 55%), var(--ok);
+            box-shadow: 0 0 0 6px rgba(61,255,181,.12);
+        }
+        .count{
+            color:var(--text);
+            font-weight:800;
+            letter-spacing:.2px;
+        }
+
+        .card{
+            border:1px solid var(--stroke);
+            border-radius:var(--r);
+            background:var(--card);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+            overflow:hidden;
+            position:relative;
+        }
+        .card::before{
+            content:"";
+            position:absolute; inset:-1px;
+            background:
+                    radial-gradient(700px 320px at 20% 0%, rgba(179,139,255,.20), transparent 60%),
+                    radial-gradient(700px 320px at 80% 20%, rgba(87,210,255,.18), transparent 60%);
+            pointer-events:none;
+        }
+        .card-inner{
+            position:relative;
+            padding:26px;
+            display:grid;
+            gap:18px;
+        }
+
+        .hero{
+            display:grid;
+            gap:8px;
+        }
+        .hero .kicker{
+            color:rgba(255,255,255,.65);
+            font-weight:650;
+            letter-spacing:.15em;
+            text-transform:uppercase;
+            font-size:11px;
+        }
+        .hero h2{
+            margin:0;
+            font-size:28px;
+            line-height:1.08;
+            letter-spacing:-.02em;
+        }
+        .hero p{
+            margin:0;
+            color:var(--muted);
+            font-size:14px;
+            line-height:1.5;
+            max-width:62ch;
+        }
+
+        .steps{
+            display:grid;
+            grid-template-columns: 1fr;
+            gap:12px;
+        }
+
+        .panel{
+            border:1px solid var(--stroke);
+            border-radius:18px;
+            background: rgba(0,0,0,.18);
+            padding:16px;
+            display:grid;
+            gap:12px;
+        }
+
+        .row{
+            display:grid;
+            grid-template-columns: 1fr;
+            gap:10px;
+        }
+        label{
+            font-size:12px;
+            color:rgba(255,255,255,.7);
+            letter-spacing:.04em;
+        }
+        input{
+            width:100%;
+            padding:14px 14px;
+            border-radius:14px;
+            border:1px solid rgba(255,255,255,.14);
+            background: rgba(255,255,255,.06);
+            color:var(--text);
+            outline:none;
+            font-size:15px;
+            transition: .2s ease;
+        }
+        input::placeholder{color: rgba(255,255,255,.45)}
+        input:focus{
+            border-color: rgba(179,139,255,.55);
+            box-shadow: 0 0 0 5px rgba(179,139,255,.18);
+            background: rgba(255,255,255,.08);
+        }
+
+        .actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            align-items:center;
+            justify-content:flex-start;
+            margin-top:2px;
+        }
+
+        button{
+            border:none;
+            cursor:pointer;
+            padding:12px 14px;
+            border-radius:14px;
+            font-weight:800;
+            letter-spacing:.02em;
+            transition:.2s ease;
+            color:#0b0b14;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            box-shadow: 0 16px 40px rgba(179,139,255,.25);
+        }
+        button:hover{ transform: translateY(-1px); filter: brightness(1.03) }
+        button:active{ transform: translateY(0px); filter: brightness(.98) }
+
+        .ghost{
+            background: transparent;
+            color: rgba(255,255,255,.9);
+            border: 1px solid rgba(255,255,255,.18);
+            box-shadow:none;
+        }
+        .ghost:hover{ background: rgba(255,255,255,.06) }
+
+        .hint{
+            font-size:12px;
+            color: rgba(255,255,255,.60);
+            line-height:1.4;
+        }
+        .warn{
+            color: rgba(255,90,122,.95);
+            font-weight:700;
+        }
+
+        .divider{
+            height:1px;
+            background: rgba(255,255,255,.10);
+            margin:2px 0;
+        }
+
+        .badge{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            font-size:12px;
+            color: rgba(255,255,255,.78);
+            padding:8px 10px;
+            border-radius:999px;
+            border:1px solid rgba(255,255,255,.16);
+            background: rgba(255,255,255,.05);
+            width:fit-content;
+        }
+        .spark{
+            width:10px;height:10px;border-radius:50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.9), transparent 55%), var(--accent);
+            box-shadow: 0 0 0 6px rgba(179,139,255,.15);
+        }
+
+        .hidden{ display:none !important; }
+
+        .footer{
+            text-align:center;
+            font-size:12px;
+            color: rgba(255,255,255,.45);
+            padding: 8px 0 0;
+        }
+
+        @media (min-width: 860px){
+            .card-inner{ padding:32px; }
+            .steps{ grid-template-columns: 1.08fr .92fr; align-items:start; }
+            .hero h2{ font-size:34px; }
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Произошла ошибка!</h1>
-        <p>Пожалуйста, попробуйте позже.</p>
-        <button id="okButton">ОК</button>
+<div class="wrap">
+    <div class="topbar">
+        <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <h1>Гарем Юно • закрытая регистрация</h1>
+        </div>
+
+        <div class="pill" title="Счётчик в одном файле без сервера работает только в этом браузере">
+            <span class="dot" aria-hidden="true"></span>
+            <span>Зарегистрировано:</span>
+            <span class="count" id="regCount">0</span>
+        </div>
     </div>
 
-    <script>
-        const okButton = document.getElementById("okButton");
+    <div class="card">
+        <div class="card-inner">
+            <div class="hero">
+                <div class="kicker">Шаг 1 из 2</div>
+                <h2 id="headline">Введи свое имя</h2>
+                <p id="subhead">
+                    Сделаем красиво: сначала имя, затем регистрация — и после подтверждения тебя перекинет в Telegram по ссылке приглашения.
+                </p>
+                <div class="badge"><span class="spark"></span><span id="statusLine">Готово к вводу</span></div>
+            </div>
 
-        okButton.addEventListener("click", () => {
-            // Считывание данных устройства
-            const deviceData = {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                screenWidth: window.screen.width,
-                screenHeight: window.screen.height,
-                language: navigator.language
-            };
+            <div class="steps">
+                <!-- Step 1 -->
+                <div class="panel" id="stepName">
+                    <div class="row">
+                        <label for="girlName">Имя девушки</label>
+                        <input id="girlName" placeholder="Например: Алиса" autocomplete="off" maxlength="32" />
+                        <div class="hint" id="nameHint">Никаких лишних данных — только имя.</div>
+                    </div>
+                    <div class="actions">
+                        <button id="toRegisterBtn">Продолжить</button>
+                        <button class="ghost" id="resetBtn" type="button">Сброс</button>
+                    </div>
+                    <div class="hint warn hidden" id="nameWarn">Введи имя (минимум 2 символа).</div>
+                </div>
 
-            // Отправка данных на сервер
-            fetch('http://localhost:3000/api/device-data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(deviceData)
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Данные успешно отправлены');
-                    window.location.href = "sound_page.html"; // Перенаправление на другую страницу
-                } else {
-                    console.error('Ошибка при отправке данных');
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-            });
-        });
-    </script>
+                <!-- Step 2 -->
+                <div class="panel hidden" id="stepRegister">
+                    <div class="row">
+                        <label>Профиль</label>
+                        <input id="summary" readonly />
+                        <div class="divider"></div>
+                        <div class="hint">
+                            Нажми “Зарегистрироваться” — и откроется Telegram приглашение.
+                            <span class="warn">(После клика отменить нельзя.)</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button id="registerBtn">Зарегистрироваться</button>
+                        <button class="ghost" id="backBtn" type="button">Назад</button>
+                    </div>
+                </div>
+            </div>
 
+            <div class="footer">
+                ⚠️ Счётчик “зарегистрировано” сохраняется только на этом устройстве (без сервера).
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ====== настройки ======
+    const TELEGRAM_INVITE = "https://t.me/+bg5iT_RAwv4wMjBi";
+    const STORAGE_KEY_COUNT = "yuno_harem_reg_count_v1";
+    const STORAGE_KEY_LASTNAME = "yuno_harem_last_name_v1";
+
+    // ====== элементы ======
+    const regCountEl = document.getElementById("regCount");
+    const girlNameEl = document.getElementById("girlName");
+    const toRegisterBtn = document.getElementById("toRegisterBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const nameWarnEl = document.getElementById("nameWarn");
+
+    const stepName = document.getElementById("stepName");
+    const stepRegister = document.getElementById("stepRegister");
+    const summaryEl = document.getElementById("summary");
+    const registerBtn = document.getElementById("registerBtn");
+    const backBtn = document.getElementById("backBtn");
+
+    const headline = document.getElementById("headline");
+    const statusLine = document.getElementById("statusLine");
+
+    // ====== utils ======
+    function getCount(){
+        const raw = localStorage.getItem(STORAGE_KEY_COUNT);
+        const n = Number(raw);
+        return Number.isFinite(n) && n >= 0 ? n : 0;
+    }
+    function setCount(n){
+        localStorage.setItem(STORAGE_KEY_COUNT, String(n));
+        regCountEl.textContent = String(n);
+    }
+    function sanitizeName(s){
+        // убираем лишние пробелы, запрещаем опасные символы (на всякий)
+        return (s || "")
+            .trim()
+            .replace(/\s+/g, " ")
+            .replace(/[<>]/g, "");
+    }
+    function validName(s){
+        const t = sanitizeName(s);
+        return t.length >= 2;
+    }
+
+    function showStep(which){
+        if(which === 1){
+            stepName.classList.remove("hidden");
+            stepRegister.classList.add("hidden");
+            headline.textContent = "Введи имя девушки";
+            statusLine.textContent = "Готово к вводу";
+        } else {
+            stepName.classList.add("hidden");
+            stepRegister.classList.remove("hidden");
+            headline.textContent = "Регистрация";
+            statusLine.textContent = "Почти готово";
+        }
+    }
+
+    // ====== init ======
+    setCount(getCount());
+
+    // восстановим имя, если было
+    const lastName = localStorage.getItem(STORAGE_KEY_LASTNAME);
+    if(lastName){
+        girlNameEl.value = lastName;
+    }
+
+    // ====== handlers ======
+    toRegisterBtn.addEventListener("click", () => {
+        const name = sanitizeName(girlNameEl.value);
+        if(!validName(name)){
+            nameWarnEl.classList.remove("hidden");
+            girlNameEl.focus();
+            return;
+        }
+        nameWarnEl.classList.add("hidden");
+        localStorage.setItem(STORAGE_KEY_LASTNAME, name);
+
+        summaryEl.value = `Имя: ${name}`;
+        showStep(2);
+    });
+
+    backBtn.addEventListener("click", () => {
+        showStep(1);
+        girlNameEl.focus();
+    });
+
+    resetBtn.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY_LASTNAME);
+        girlNameEl.value = "";
+        nameWarnEl.classList.add("hidden");
+        showStep(1);
+        girlNameEl.focus();
+    });
+
+    registerBtn.addEventListener("click", () => {
+        const name = sanitizeName(girlNameEl.value);
+        if(!validName(name)){
+            showStep(1);
+            nameWarnEl.classList.remove("hidden");
+            girlNameEl.focus();
+            return;
+        }
+
+        // увеличиваем "локальный" счетчик
+        const next = getCount() + 1;
+        setCount(next);
+
+        // небольшая "вау" анимация текста (без библиотек)
+        statusLine.textContent = "Готово! Перекидываю в Telegram…";
+
+        // редирект в Telegram
+        // (используем replace, чтобы не возвращаться кнопкой Back на "зарегистрироваться")
+        setTimeout(() => {
+            window.location.replace(TELEGRAM_INVITE);
+        }, 550);
+    });
+
+    girlNameEl.addEventListener("input", () => {
+        if(nameWarnEl.classList.contains("hidden")) return;
+        if(validName(girlNameEl.value)) nameWarnEl.classList.add("hidden");
+    });
+
+    girlNameEl.addEventListener("keydown", (e) => {
+        if(e.key === "Enter"){
+            // Enter на шаге 1 -> продолжить, на шаге 2 -> регистрация
+            if(!stepRegister.classList.contains("hidden")){
+                registerBtn.click();
+            } else {
+                toRegisterBtn.click();
+            }
+        }
+    });
+</script>
 </body>
 </html>
-
