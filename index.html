@@ -3,696 +3,553 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Гарем Юно</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <title>LGEL ФЛУД</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;400;700;900&family=Raleway:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --black: #03020a;
-      --deep: #080614;
-      --void: #0d0b1a;
-      --text: #f0eeff;
-      --muted: #9b95c9;
-      --accent: #c8a8ff;
-      --accent2: #7de8f0;
-      --accent3: #ff8eb0;
-      --glow1: rgba(200,168,255,0.22);
-      --glow2: rgba(125,232,240,0.18);
-      --glow3: rgba(255,142,176,0.14);
-      --r: 20px;
+      --bg: #05040e;
+      --card: rgba(12,10,28,.7);
+      --text: #f2f0ff;
+      --muted: #9e98cb;
+      --a1: #e879f9;
+      --a2: #818cf8;
+      --a3: #38bdf8;
+      --a4: #f472b6;
+      --stroke: rgba(255,255,255,.1);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { height: 100%; }
-
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      background: var(--black);
+      font-family: 'Raleway', sans-serif;
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow-x: hidden;
-      position: relative;
     }
-
-    /* ─── CANVAS BG ─── */
-    #starfield {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ─── MESH GRADIENTS ─── */
+    #cvs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
     .mesh {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
       background:
-        radial-gradient(ellipse 1000px 700px at 15% 20%, var(--glow1), transparent 55%),
-        radial-gradient(ellipse 800px 700px at 85% 15%, var(--glow2), transparent 55%),
-        radial-gradient(ellipse 800px 800px at 50% 95%, var(--glow3), transparent 55%),
-        radial-gradient(ellipse 600px 400px at 70% 55%, rgba(200,168,255,0.07), transparent 60%);
-      animation: meshPulse 12s ease-in-out infinite alternate;
+        radial-gradient(ellipse 900px 600px at 10% 15%, rgba(232,121,249,.18), transparent 55%),
+        radial-gradient(ellipse 700px 600px at 90% 20%, rgba(129,140,248,.16), transparent 55%),
+        radial-gradient(ellipse 700px 700px at 55% 90%, rgba(56,189,248,.13), transparent 55%);
+      animation: mp 14s ease-in-out infinite alternate;
     }
-    @keyframes meshPulse {
-      0%   { opacity: .85; transform: scale(1); }
-      50%  { opacity: 1;   transform: scale(1.03); }
-      100% { opacity: .9;  transform: scale(.98); }
-    }
-
-    /* ─── NOISE TEXTURE OVERLAY ─── */
+    @keyframes mp { from{opacity:.8;transform:scale(1)} to{opacity:1;transform:scale(1.04)} }
     .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      opacity: .028;
+      position: fixed; inset: 0; pointer-events: none; z-index: 2; opacity: .025;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 256px;
+      background-size: 200px;
     }
 
-    /* ─── MAIN LAYOUT ─── */
-    .scene {
-      position: relative;
-      z-index: 10;
-      width: min(940px, 100%);
-      padding: 28px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 13px 28px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: rgba(5,4,14,.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--stroke);
+      animation: fd .8s both;
     }
-
-    /* ─── TOP BAR ─── */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 12px 18px;
-      border: 1px solid rgba(200,168,255,.18);
-      border-radius: 100px;
-      background: rgba(13,11,26,.55);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      box-shadow: 0 4px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
-      animation: fadeSlideDown .8s cubic-bezier(.22,1,.36,1) both;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-    .logo-mark {
-      width: 32px; height: 32px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 8px 24px rgba(200,168,255,.35);
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
-    }
-    .logo-mark::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(120deg, rgba(255,255,255,.3) 0%, transparent 60%);
-    }
-    .brand-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 15px;
-      letter-spacing: .06em;
+    .nav-logo {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 900; font-size: 18px; letter-spacing: .08em;
+      background: linear-gradient(90deg, var(--a1), var(--a2), var(--a3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       white-space: nowrap;
     }
-    .live-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11.5px;
-      color: var(--muted);
-      letter-spacing: .04em;
+    .nav-links { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .nav-links a {
+      text-decoration: none; font-size: 12px; letter-spacing: .06em;
+      color: var(--muted); padding: 7px 14px; border-radius: 999px;
+      border: 1px solid transparent; transition: .2s; font-weight: 400;
     }
-    .live-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #3dffb5;
-      box-shadow: 0 0 0 4px rgba(61,255,181,.18), 0 0 12px rgba(61,255,181,.5);
-      animation: pulse 2.2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 4px rgba(61,255,181,.18), 0 0 12px rgba(61,255,181,.5); }
-      50%       { box-shadow: 0 0 0 8px rgba(61,255,181,.06), 0 0 24px rgba(61,255,181,.7); }
-    }
-    .live-count {
-      color: var(--text);
-      font-weight: 400;
-    }
+    .nav-links a:hover { color: var(--text); border-color: var(--stroke); background: rgba(255,255,255,.05); }
+    .nav-join { padding: 8px 18px !important; background: linear-gradient(135deg,var(--a1),var(--a2)) !important; color: #0a0820 !important; font-weight: 700 !important; border-color: transparent !important; }
+    .nav-join:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-    /* ─── CARD ─── */
-    .card {
-      position: relative;
-      border-radius: 28px;
-      overflow: hidden;
-      border: 1px solid rgba(200,168,255,.14);
-      background: rgba(8,6,20,.6);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow:
-        0 40px 80px rgba(0,0,0,.7),
-        0 0 0 1px rgba(255,255,255,.04) inset,
-        0 1px 0 rgba(255,255,255,.08) inset;
-      animation: fadeSlideUp .9s .15s cubic-bezier(.22,1,.36,1) both;
-    }
+    main { position: relative; z-index: 10; }
+    section { padding: 100px 28px 60px; max-width: 1060px; margin: 0 auto; }
 
-    /* inner glow top */
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(200,168,255,.6) 30%, rgba(125,232,240,.5) 60%, transparent);
+    /* HERO */
+    .hero-section {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; gap: 22px; padding-top: 80px !important;
     }
-    /* light flare top-right */
-    .card::after {
-      content: '';
-      position: absolute;
-      top: -80px; right: -80px;
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(125,232,240,.12), transparent 65%);
-      pointer-events: none;
-    }
-
-    .card-body {
-      position: relative;
-      padding: 40px 36px 36px;
-      display: grid;
-      gap: 32px;
-    }
-
-    /* ─── HERO ─── */
-    .hero {
-      display: grid;
-      gap: 10px;
-      max-width: 580px;
-    }
-    .kicker {
-      font-family: 'DM Mono', monospace;
-      font-size: 10.5px;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      color: var(--accent);
-      opacity: .85;
-      animation: fadeSlideUp .7s .3s both;
+    .hero-eyebrow {
+      font-family: 'Unbounded', sans-serif; font-size: 10px;
+      letter-spacing: .32em; text-transform: uppercase; color: var(--a1); opacity: .9;
+      animation: su .6s .1s both;
     }
     .hero-title {
-      font-size: clamp(32px, 5vw, 52px);
-      font-weight: 300;
-      line-height: 1.04;
-      letter-spacing: -.01em;
-      animation: fadeSlideUp .7s .4s both;
+      font-family: 'Unbounded', sans-serif; font-weight: 900;
+      font-size: clamp(52px, 12vw, 120px); line-height: .95; letter-spacing: -.02em;
+      animation: su .7s .2s both;
     }
-    .hero-title em {
-      font-style: italic;
-      background: linear-gradient(95deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .hero-title .g {
+      background: linear-gradient(95deg, var(--a1) 0%, var(--a2) 50%, var(--a3) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .hero-sub {
-      font-size: 16px;
-      font-weight: 300;
-      color: var(--muted);
-      line-height: 1.55;
-      animation: fadeSlideUp .7s .5s both;
+    .hero-title .outline { color: rgba(255,255,255,.1); -webkit-text-stroke: 1px rgba(255,255,255,.28); }
+    .hero-sub { font-size: 16px; font-weight: 300; color: var(--muted); line-height: 1.6; max-width: 52ch; animation: su .7s .35s both; }
+    .hero-sub em { color: var(--a4); font-style: normal; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; animation: su .7s .5s both; }
+    .live-pill {
+      display: flex; align-items: center; gap: 10px; padding: 9px 18px; border-radius: 999px;
+      border: 1px solid rgba(232,121,249,.25); background: rgba(232,121,249,.07);
+      font-size: 12px; color: var(--a1); letter-spacing: .05em; animation: su .7s .65s both;
     }
-    .status-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      margin-top: 4px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(200,168,255,.22);
-      background: rgba(200,168,255,.07);
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: .06em;
-      color: var(--accent);
-      width: fit-content;
-      animation: fadeSlideUp .7s .6s both;
-      transition: border-color .3s, background .3s;
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #a3e635;
+      box-shadow: 0 0 0 5px rgba(163,230,53,.15),0 0 14px rgba(163,230,53,.6);
+      animation: lp 2s infinite;
     }
-    .status-spark {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
-      animation: sparkle 2.5s ease-in-out infinite;
-    }
-    @keyframes sparkle {
-      0%,100% { transform: scale(1); opacity: 1; }
-      50%      { transform: scale(1.4); opacity: .7; }
+    @keyframes lp {
+      0%,100%{box-shadow:0 0 0 5px rgba(163,230,53,.15),0 0 12px rgba(163,230,53,.6)}
+      50%{box-shadow:0 0 0 10px rgba(163,230,53,.05),0 0 24px rgba(163,230,53,.8)}
     }
 
-    /* ─── STEP PANELS ─── */
-    .steps-wrap {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-      animation: fadeSlideUp .7s .7s both;
-    }
-
-    .step-panel {
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 20px;
-      background: rgba(0,0,0,.2);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      transition: border-color .4s, box-shadow .4s;
-    }
-    .step-panel:hover {
-      border-color: rgba(200,168,255,.22);
-      box-shadow: 0 0 0 1px rgba(200,168,255,.08);
-    }
-
-    .field-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.45);
-      margin-bottom: 6px;
-    }
-
-    input[type="text"], input[readonly] {
-      width: 100%;
-      padding: 15px 18px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.1);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-weight: 300;
-      outline: none;
-      letter-spacing: .02em;
-      transition: border-color .25s, box-shadow .25s, background .25s;
-    }
-    input::placeholder { color: rgba(255,255,255,.28); font-style: italic; }
-    input:focus {
-      border-color: rgba(200,168,255,.5);
-      background: rgba(200,168,255,.05);
-      box-shadow: 0 0 0 4px rgba(200,168,255,.12);
-    }
-    input[readonly] {
-      border-color: rgba(200,168,255,.22);
-      background: rgba(200,168,255,.06);
-      color: var(--accent);
-      cursor: default;
-    }
-
-    .hint-text {
-      font-size: 13px;
-      font-weight: 300;
-      color: rgba(255,255,255,.45);
-      line-height: 1.5;
-    }
-    .hint-text.warn { color: rgba(255,142,176,.9); font-style: italic; }
-
-    /* ─── BUTTONS ─── */
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
+    /* BUTTONS */
     .btn {
-      position: relative;
-      border: none;
-      cursor: pointer;
-      padding: 13px 24px;
-      border-radius: 14px;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: .04em;
-      transition: transform .18s cubic-bezier(.22,1,.36,1), box-shadow .18s, filter .18s;
-      overflow: hidden;
+      font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 14px;
+      letter-spacing: .06em; padding: 13px 28px; border-radius: 14px; border: none; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, filter .2s;
+      position: relative; overflow: hidden;
     }
-    .btn::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(120deg, rgba(255,255,255,.15) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity .2s;
-    }
-    .btn:hover::before { opacity: 1; }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:active { transform: translateY(0); }
+    .btn::before { content:''; position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.18) 0%,transparent 55%);opacity:0;transition:opacity .2s; }
+    .btn:hover::before{opacity:1} .btn:hover{transform:translateY(-3px)} .btn:active{transform:translateY(0)}
+    .btn-pri { background:linear-gradient(135deg,var(--a1),var(--a2)); color:#09071d; box-shadow:0 14px 40px rgba(232,121,249,.35); }
+    .btn-pri:hover{box-shadow:0 20px 50px rgba(232,121,249,.45)}
+    .btn-sec { background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18); }
+    .btn-sec:hover{background:rgba(255,255,255,.06)}
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-      color: #07051a;
-      box-shadow: 0 12px 36px rgba(200,168,255,.35), 0 4px 12px rgba(0,0,0,.3);
+    /* CARD */
+    .card {
+      border:1px solid var(--stroke); border-radius:24px; background:var(--card);
+      backdrop-filter:blur(18px); overflow:hidden; position:relative;
+      box-shadow:0 30px 70px rgba(0,0,0,.55);
     }
-    .btn-primary:hover {
-      box-shadow: 0 18px 48px rgba(200,168,255,.45), 0 6px 16px rgba(0,0,0,.3);
+    .card::before {
+      content:''; position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,var(--a1) 25%,var(--a2) 55%,var(--a3) 80%,transparent);
     }
+    .card-inner{padding:30px}
 
-    .btn-ghost {
-      background: transparent;
-      color: rgba(255,255,255,.65);
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: none;
-    }
-    .btn-ghost:hover {
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border-color: rgba(255,255,255,.25);
-    }
+    /* SECTION */
+    .sec-label { font-family:'Unbounded',sans-serif;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--a1);margin-bottom:10px;opacity:.85; }
+    .sec-title { font-family:'Unbounded',sans-serif;font-weight:700;font-size:clamp(24px,4vw,40px);line-height:1.1;letter-spacing:-.01em;margin-bottom:14px; }
+    .sec-title span { background:linear-gradient(90deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .sec-sub { font-size:15px;font-weight:300;color:var(--muted);line-height:1.6;max-width:55ch;margin-bottom:36px; }
 
-    /* ─── DIVIDER ─── */
-    .div-line {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.1) 30%, rgba(255,255,255,.1) 70%, transparent);
+    /* INFO CARDS */
+    .info-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:32px; }
+    .info-card {
+      border:1px solid var(--stroke);border-radius:20px;background:rgba(255,255,255,.03);
+      padding:24px;display:flex;flex-direction:column;gap:10px;
+      transition:border-color .3s,box-shadow .3s,transform .3s;
     }
+    .info-card:hover{border-color:rgba(232,121,249,.3);box-shadow:0 8px 32px rgba(232,121,249,.1);transform:translateY(-3px)}
+    .info-icon{font-size:28px}
+    .info-card h3{font-family:'Unbounded',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em}
+    .info-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.55}
+    .info-card strong{color:var(--a1);font-weight:600}
 
-    /* ─── FOOTER ─── */
-    .card-footer {
-      font-family: 'DM Mono', monospace;
-      font-size: 10.5px;
-      letter-spacing: .06em;
-      color: rgba(255,255,255,.3);
-      text-align: center;
-      padding: 0 0 4px;
-    }
+    /* ADMIN */
+    .admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .admin-card{border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.03);padding:20px 18px;display:flex;flex-direction:column;gap:8px;transition:.3s}
+    .admin-card:hover{border-color:rgba(129,140,248,.35);background:rgba(129,140,248,.06);transform:translateY(-2px)}
+    .admin-role{font-family:'Unbounded',sans-serif;font-size:8px;letter-spacing:.22em;text-transform:uppercase;padding:4px 10px;border-radius:999px;width:fit-content}
+    .role-owner{background:rgba(232,121,249,.15);color:var(--a1);border:1px solid rgba(232,121,249,.3)}
+    .role-deputy{background:rgba(244,114,182,.12);color:var(--a4);border:1px solid rgba(244,114,182,.3)}
+    .role-senior{background:rgba(129,140,248,.12);color:var(--a2);border:1px solid rgba(129,140,248,.3)}
+    .role-junior{background:rgba(56,189,248,.1);color:var(--a3);border:1px solid rgba(56,189,248,.25)}
+    .admin-name{font-weight:600;font-size:15px}
+    .admin-handle{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
+    .admin-handle:hover{color:var(--a2)}
+    .admin-desc{font-size:12px;font-weight:300;color:rgba(255,255,255,.4);line-height:1.45}
 
-    /* ─── ANIMATIONS ─── */
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeSlideDown {
-      from { opacity: 0; transform: translateY(-12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    /* FANDOM ACCORDION */
+    .fandom-list{display:flex;flex-direction:column;gap:10px}
+    .fandom-block{border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.025);overflow:hidden;transition:.3s}
+    .fandom-block:hover{border-color:rgba(232,121,249,.2)}
+    .fandom-header{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+    .fandom-name{font-family:'Unbounded',sans-serif;font-weight:700;font-size:12px;letter-spacing:.05em;flex:1}
+    .fandom-count{font-size:11px;color:var(--muted);padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.06)}
+    .fandom-arrow{font-size:10px;color:var(--muted);transition:transform .25s}
+    .fandom-block.open .fandom-arrow{transform:rotate(180deg)}
+    .fandom-roles{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.22,1,.36,1),padding .3s}
+    .fandom-block.open .fandom-roles{max-height:400px;padding-bottom:14px}
+    .role-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.05)}
+    .role-char{font-size:14px;flex:1}
+    .role-user{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
+    .role-user:hover{color:var(--a1)}
+    .role-taken{font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(248,113,113,.08);color:#fca5a5;border:1px solid rgba(248,113,113,.18)}
+    .role-reserved{font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(251,191,36,.08);color:#fcd34d;border:1px solid rgba(251,191,36,.2)}
 
-    .hidden { display: none !important; }
+    /* RULES */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+    .tab{padding:8px 18px;border-radius:999px;border:1px solid var(--stroke);background:transparent;font-family:'Raleway',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;transition:.2s}
+    .tab.active,.tab:hover{border-color:var(--a1);color:var(--a1);background:rgba(232,121,249,.08)}
+    .tab-content{display:none} .tab-content.active{display:block}
+    .rule-list{display:flex;flex-direction:column;gap:10px}
+    .rule-item{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.025)}
+    .rule-num{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;color:var(--a1);min-width:24px;padding-top:2px}
+    .rule-text{font-size:14px;font-weight:300;color:var(--muted);line-height:1.55}
+    .rule-text strong{color:var(--text);font-weight:600}
 
-    /* ─── STEP TRANSITION ─── */
-    .step-panel {
-      animation: fadeSlideUp .45s cubic-bezier(.22,1,.36,1) both;
-    }
+    /* JOIN */
+    .join-box{text-align:center;padding:64px 32px;display:flex;flex-direction:column;align-items:center;gap:20px}
+    .join-emoji{font-size:56px;animation:bounce 2s ease-in-out infinite}
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
-    /* ─── SUCCESS OVERLAY ─── */
-    .success-overlay {
-      position: fixed; inset: 0;
-      background: rgba(3,2,10,.95);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 999;
-      flex-direction: column;
-      gap: 18px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .5s ease;
-    }
-    .success-overlay.show {
-      opacity: 1;
-      pointer-events: all;
-    }
-    .success-ring {
-      width: 90px; height: 90px;
-      border-radius: 50%;
-      border: 2px solid var(--accent);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 40px;
-      box-shadow: 0 0 0 16px rgba(200,168,255,.07), 0 0 48px rgba(200,168,255,.35);
-      animation: ringPop .6s cubic-bezier(.22,1,.36,1) both;
-    }
-    @keyframes ringPop {
-      from { transform: scale(.5); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
-    .success-text {
-      font-size: 26px;
-      font-weight: 300;
-      letter-spacing: .04em;
-      text-align: center;
-    }
-    .success-sub {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: .14em;
-      color: var(--muted);
-      text-transform: uppercase;
-      animation: fadeSlideUp .5s .25s both;
-    }
+    footer{position:relative;z-index:10;text-align:center;padding:28px;border-top:1px solid var(--stroke);font-size:12px;color:rgba(255,255,255,.3);letter-spacing:.04em}
 
-    /* ─── RESPONSIVE ─── */
-    @media (min-width: 720px) {
-      .card-body { padding: 48px 48px 42px; }
-      .steps-wrap { grid-template-columns: 1.1fr .9fr; align-items: start; }
-      .hero-title { font-size: 54px; }
+    @keyframes su{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fd{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    @media(max-width:600px){
+      nav{padding:12px 16px} .nav-logo{font-size:14px}
+      section{padding:90px 16px 50px} .card-inner{padding:20px} .join-box{padding:40px 16px}
     }
   </style>
 </head>
 <body>
 
-<canvas id="starfield"></canvas>
+<canvas id="cvs"></canvas>
 <div class="mesh"></div>
 <div class="noise"></div>
 
-<!-- SUCCESS OVERLAY -->
-<div class="success-overlay" id="successOverlay">
-  <div class="success-ring">✦</div>
-  <div class="success-text">Добро пожаловать</div>
-  <div class="success-sub" id="successName">в Гарем Юно</div>
-</div>
-
-<div class="scene">
-
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="brand">
-      <div class="logo-mark">✦</div>
-      <span class="brand-name">Гарем Юно &nbsp;·&nbsp; Закрытая регистрация</span>
-    </div>
-    <div class="live-badge">
-      <span class="live-dot"></span>
-      <span>зарегистрировано:</span>
-      <span class="live-count" id="regCount">0</span>
-    </div>
+<nav>
+  <div class="nav-logo">LGEL ФЛУД</div>
+  <div class="nav-links">
+    <a href="#info">Инфо</a>
+    <a href="#admin">Команда</a>
+    <a href="#roles">Роли</a>
+    <a href="#rules">Правила</a>
+    <a href="https://t.me/famuliaf" target="_blank" class="nav-join">Вступить ✦</a>
   </div>
+</nav>
 
-  <!-- CARD -->
-  <div class="card">
-    <div class="card-body">
+<main>
 
-      <!-- HERO -->
-      <div class="hero">
-        <div class="kicker" id="stepKicker">Шаг 1 из 2</div>
-        <h1 class="hero-title" id="heroTitle">Введи своё <em>имя</em></h1>
-        <p class="hero-sub" id="heroSub">
-          Первый шаг — твоё имя. Затем финальное подтверждение, и ты окажешься там, где тебя ждут.
-        </p>
-        <div class="status-tag" id="statusTag">
-          <span class="status-spark"></span>
-          <span id="statusText">Готова начать</span>
+  <!-- HERO -->
+  <section class="hero-section" id="home">
+    <div class="hero-eyebrow">Добро пожаловать в</div>
+    <div class="hero-title">
+      <div class="g">LGEL</div>
+      <div class="outline">ФЛУД</div>
+    </div>
+    <p class="hero-sub">Флуд по всем фандомам — аниме, сериалы, игры и не только. <em>Найди своего персонажа</em> и стань частью нашего сообщества.</p>
+    <div class="live-pill"><span class="live-dot"></span>TikTok: <strong>lgell_fl</strong></div>
+    <div class="hero-btns">
+      <a href="https://t.me/famuliaf" target="_blank" class="btn btn-pri">✦ Вступить в флуд</a>
+      <a href="#roles" class="btn btn-sec">Посмотреть роли</a>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section id="info">
+    <div class="reveal">
+      <div class="sec-label">Информация</div>
+      <h2 class="sec-title">О нашем <span>флуде</span></h2>
+      <p class="sec-sub">Здесь вы найдёте всю информацию из жизни нашего флуда. Изучите правила и занятые роли перед тем, как зайти.</p>
+    </div>
+    <div class="info-grid reveal">
+      <div class="info-card">
+        <div class="info-icon">💬</div>
+        <h3>Норма сообщений</h3>
+        <p>Норма: <strong>150 сообщений</strong> в неделю. Чистка каждое <strong>воскресенье</strong>. Набирать во время чистки = автокик.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🌙</div>
+        <h3>Рест</h3>
+        <p>Хочешь отдохнуть — напиши владельцу. Обговорите время, дату и срок, и отдыхай со спокойной душой.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🎬</div>
+        <h3>Монтаж</h3>
+        <p>Абсолютно <strong>любой участник</strong> может стать монтажёром. TikTok: <strong>lgell_fl</strong></p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">✨</div>
+        <h3>Фандомы</h3>
+        <p>Death Note, Naruto, Какегурui, Магическая Битва, Блич, FF7 и <strong>десятки других миров</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="admin">
+    <div class="reveal">
+      <div class="sec-label">Команда</div>
+      <h2 class="sec-title"><span>Администрация</span></h2>
+      <p class="sec-sub">Наша команда следит за жизнью флуда, атмосферой и поиском новых участников.</p>
+    </div>
+    <div class="admin-grid reveal">
+      <div class="admin-card">
+        <div class="admin-role role-owner">OWNER</div>
+        <div class="admin-name">famuliaf</div>
+        <a href="https://t.me/famuliaf" target="_blank" class="admin-handle">@famuliaf</a>
+        <div class="admin-desc">Владелец флуда. TikTok аккаунт, инфо канал, жизнь флуда.</div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-role role-deputy">DEPUTY OWNER</div>
+        <div class="admin-name">yunochhka</div>
+        <a href="https://t.me/yunochhka" target="_blank" class="admin-handle">@yunochhka</a>
+        <div class="admin-desc">Полноценный заместитель владельца.</div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-role role-senior">SENIOR ADMIN</div>
+        <div class="admin-name">MasRn0</div>
+        <a href="https://t.me/MasRn0" target="_blank" class="admin-handle">@MasRn0</a>
+        <div class="admin-desc">Следит за чатом, расширенные привилегии.</div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-role role-senior">SENIOR ADMIN</div>
+        <div class="admin-name">angelcareyou</div>
+        <a href="https://t.me/angelcareyou" target="_blank" class="admin-handle">@angelcareyou</a>
+        <div class="admin-desc">Следит за чатом, расширенные привилегии.</div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-role role-junior">JUNIOR ADMIN</div>
+        <div class="admin-name">AshSniper7</div>
+        <a href="https://t.me/AshSniper7" target="_blank" class="admin-handle">@AshSniper7</a>
+        <div class="admin-desc">Чат, поиск новых участников.</div>
+      </div>
+      <div class="admin-card">
+        <div class="admin-role role-junior">JUNIOR ADMIN</div>
+        <div class="admin-name">ShiloInPopA</div>
+        <a href="https://t.me/ShiloInPopA" target="_blank" class="admin-handle">@ShiloInPopA</a>
+        <div class="admin-desc">Чат, поиск новых участников.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section id="roles">
+    <div class="reveal">
+      <div class="sec-label">Роли</div>
+      <h2 class="sec-title">Список <span>занятых ролей</span></h2>
+      <p class="sec-sub">Нажми на фандом, чтобы развернуть. Хочешь роль? Пиши <a href="https://t.me/famuliaf" target="_blank" style="color:var(--a1);text-decoration:none">@famuliaf</a></p>
+    </div>
+    <div class="fandom-list reveal">
+
+      <div class="fandom-block open">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">☠️ &nbsp;DEATH NOTE</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Л Лоулайт</span><a href="https://t.me/famuliaf" class="role-user" target="_blank">@famuliaf</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Мэтт</span><a href="https://t.me/AshSniper7" class="role-user" target="_blank">@AshSniper7</a><span class="role-taken">Занята</span></div>
         </div>
       </div>
 
-      <!-- STEPS -->
-      <div class="steps-wrap">
-
-        <!-- Step 1 -->
-        <div class="step-panel" id="stepName">
-          <div>
-            <div class="field-label">Имя</div>
-            <input type="text" id="girlName" placeholder="Твоё имя…" autocomplete="off" maxlength="32" />
-          </div>
-          <div class="hint-text">Только имя — никакой лишней информации.</div>
-          <div class="hint-text warn hidden" id="nameWarn">Введи имя (минимум 2 символа)</div>
-          <div class="btn-row">
-            <button class="btn btn-primary" id="toRegisterBtn">Продолжить →</button>
-            <button class="btn btn-ghost" id="resetBtn">Сброс</button>
-          </div>
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">🃏 &nbsp;KAKEGURUI</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
         </div>
-
-        <!-- Step 2 -->
-        <div class="step-panel hidden" id="stepRegister">
-          <div>
-            <div class="field-label">Профиль</div>
-            <input type="text" id="summaryInput" readonly />
-          </div>
-          <div class="div-line"></div>
-          <div class="hint-text">
-            Нажми кнопку — откроется приглашение в Telegram.
-            <br/><span style="color:rgba(255,142,176,.7)">Действие необратимо.</span>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-primary" id="registerBtn">Войти ✦</button>
-            <button class="btn btn-ghost" id="backBtn">← Назад</button>
-          </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Юмеко Ябами</span><a href="https://t.me/angelcareyou" class="role-user" target="_blank">@angelcareyou</a><span class="role-taken">Занята</span></div>
         </div>
-
       </div>
 
-      <!-- FOOTER -->
-      <div class="card-footer">
-        ⚠ &nbsp;Счётчик хранится только на этом устройстве — без серверов, без трекинга.
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">📓 &nbsp;ДНЕВНИК БУДУЩЕГО</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Юно Гасай</span><a href="https://t.me/yunochhka" class="role-user" target="_blank">@yunochhka</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">♟️ &nbsp;КОД ГИАС</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Лелуш</span><a href="https://t.me/MasRn0" class="role-user" target="_blank">@MasRn0</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Сузаку</span><a href="https://t.me/amsterdamoww" class="role-user" target="_blank">@amsterdamoww</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">🍃 &nbsp;NARUTO</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Итачи</span><a href="https://t.me/xuewls" class="role-user" target="_blank">@xuewls</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">🩸 &nbsp;VAMPIRE KNIGHT</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Юки Кросс</span><span style="flex:1"></span><span class="role-reserved">Бронь</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">⚡ &nbsp;БЕЗДОМНЫЙ БОГ</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Ято</span><a href="https://t.me/Anisaoit" class="role-user" target="_blank">@Anisaoit</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">🔮 &nbsp;МАГИЧЕСКАЯ БИТВА</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Юки Цукумо</span><a href="https://t.me/zuki_zukilop" class="role-user" target="_blank">@zuki_zukilop</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">⚔️ &nbsp;БЛИЧ</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Менина</span><a href="https://t.me/mikoi3" class="role-user" target="_blank">@mikoi3</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">🔱 &nbsp;DEVIL MAY CRY</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Леди</span><a href="https://t.me/cherrygirl46" class="role-user" target="_blank">@cherrygirl46</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Данте</span><a href="https://t.me/ShiloInPopA" class="role-user" target="_blank">@ShiloInPopA</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">🌌 &nbsp;FINAL FANTASY 7</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Клауд</span><a href="https://t.me/tiffharam" class="role-user" target="_blank">@tiffharam</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">☀️ &nbsp;500 ДНЕЙ ЛЕТА</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Том</span><a href="https://t.me/Madopk" class="role-user" target="_blank">@Madopk</a><span class="role-taken">Занята</span></div>
+        </div>
+      </div>
+
+      <div class="fandom-block">
+        <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="fandom-name">🌸 &nbsp;ДРУГИЕ ФАНДОМЫ</div><span class="fandom-count">8</span><span class="fandom-arrow">▼</span>
+        </div>
+        <div class="fandom-roles">
+          <div class="role-row"><span class="role-char">Лиса Роу (Прерванная жизнь)</span><a href="https://t.me/yunochhka" class="role-user" target="_blank">@yunochhka</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Сайя (Песнь Сайи)</span><a href="https://t.me/ht807" class="role-user" target="_blank">@ht807</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Юри (GLT)</span><a href="https://t.me/MaMalaras_111" class="role-user" target="_blank">@MaMalaras_111</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Юри (Клуб Яричин)</span><a href="https://t.me/all_is333" class="role-user" target="_blank">@all_is333</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Оля (Тинни Банни)</span><a href="https://t.me/UYOVINX" class="role-user" target="_blank">@UYOVINX</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Иан (Бесстыжие)</span><span style="flex:1"></span><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Айко Танака (Пунпун)</span><a href="https://t.me/p0zyrattel" class="role-user" target="_blank">@p0zyrattel</a><span class="role-taken">Занята</span></div>
+          <div class="role-row"><span class="role-char">Мелстрой</span><a href="https://t.me/morganchloveu" class="role-user" target="_blank">@morganchloveu</a><span class="role-taken">Занята</span></div>
+        </div>
       </div>
 
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- ─── SCRIPTS ─── -->
+  <!-- RULES -->
+  <section id="rules">
+    <div class="reveal">
+      <div class="sec-label">Правила</div>
+      <h2 class="sec-title">Правила <span>флуда</span></h2>
+      <p class="sec-sub">Прочитай перед вступлением — обязательно к соблюдению.</p>
+    </div>
+    <div class="reveal">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this,'t-main')">Основные</button>
+        <button class="tab" onclick="switchTab(this,'t-flood')">Норма</button>
+        <button class="tab" onclick="switchTab(this,'t-rest')">Рест</button>
+      </div>
+      <div class="tab-content active" id="t-main">
+        <div class="rule-list">
+          <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Перед вступлением прочитай правила и изучи занятые роли.</div></div>
+          <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Уважай всех участников. Токсичность и оскорбления — запрещены.</div></div>
+          <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Все вопросы — к <strong>владельцу @famuliaf</strong></div></div>
+          <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Соблюдай активность. Без уведомления = кик.</div></div>
+          <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Любой может стать монтажёром: <strong>lgell_fl</strong></div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="t-flood">
+        <div class="rule-list">
+          <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Норма: <strong>150 сообщений</strong> в неделю.</div></div>
+          <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Чистка каждое <strong>воскресенье</strong>.</div></div>
+          <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Набирать сообщения во время чистки — <strong>запрещено</strong>. Автокик.</div></div>
+          <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Не успеваешь — предупреди администрацию заранее.</div></div>
+        </div>
+      </div>
+      <div class="tab-content" id="t-rest">
+        <div class="rule-list">
+          <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Хочешь рест — обязательно напиши <strong>владельцу флуда</strong>.</div></div>
+          <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Обговорите время, дату и срок реста вместе.</div></div>
+          <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">После согласования — отдыхай спокойно, кика не будет.</div></div>
+          <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Несогласованный рест без предупреждения может привести к кику.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOIN -->
+  <section id="join" style="padding-bottom:80px">
+    <div class="card reveal">
+      <div class="card-inner join-box">
+        <div class="join-emoji">✨</div>
+        <h2 class="sec-title" style="margin:0">Хочешь <span>вступить?</span></h2>
+        <p class="sec-sub" style="margin:0;text-align:center">Пиши владельцу флуда в Telegram — обсудим роль и все детали.</p>
+        <a href="https://t.me/famuliaf" target="_blank" class="btn btn-pri" style="font-size:15px;padding:15px 36px">Написать @famuliaf</a>
+        <div style="font-size:12px;color:var(--muted)">TikTok: <strong style="color:var(--a1)">lgell_fl</strong></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  LGEL ФЛУД &nbsp;·&nbsp; <a href="https://t.me/famuliaf" target="_blank" style="color:var(--a1);text-decoration:none">@famuliaf</a>
+</footer>
+
 <script>
-// ── Starfield canvas ──────────────────────────────────────────
 (function(){
-  const cvs = document.getElementById('starfield');
-  const ctx = cvs.getContext('2d');
-  let W, H, stars = [];
-
-  function resize(){
-    W = cvs.width  = window.innerWidth;
-    H = cvs.height = window.innerHeight;
-  }
-
-  function makeStar(){
-    return {
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.1 + .15,
-      a: Math.random(),
-      da: (Math.random() * .003 + .0005) * (Math.random() < .5 ? 1 : -1),
-      hue: Math.random() < .3 ? 260 + Math.random()*40 : (Math.random() < .5 ? 180+Math.random()*20 : 0),
-    };
-  }
-
-  function init(){
-    resize();
-    stars = Array.from({length: 220}, makeStar);
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    stars.forEach(s => {
-      s.a += s.da;
-      if(s.a > 1 || s.a < 0) s.da *= -1;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-      ctx.fillStyle = s.hue === 0
-        ? `rgba(255,255,255,${s.a * .9})`
-        : `hsla(${s.hue}, 80%, 80%, ${s.a * .7})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener('resize', ()=>{ resize(); });
-  init();
-  draw();
+  const cvs=document.getElementById('cvs'),ctx=cvs.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=cvs.width=innerWidth;H=cvs.height=innerHeight}
+  function mk(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*.9+.1,a:Math.random(),da:(Math.random()*.004+.0005)*(Math.random()<.5?1:-1),hue:Math.random()<.35?280+Math.random()*40:(Math.random()<.5?200+Math.random()*20:0)}}
+  function init(){resize();stars=Array.from({length:260},mk)}
+  function draw(){ctx.clearRect(0,0,W,H);stars.forEach(s=>{s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.hue===0?`rgba(255,255,255,${s.a*.85})`:`hsla(${s.hue},80%,80%,${s.a*.65})`;ctx.fill()});requestAnimationFrame(draw)}
+  window.addEventListener('resize',resize);init();draw();
 })();
 
-// ── App logic ──────────────────────────────────────────────────
-const TELEGRAM_INVITE  = "https://t.me/+bg5iT_RAwv4wMjBi";
-const STORAGE_COUNT    = "yuno_harem_reg_count_v1";
-const STORAGE_LASTNAME = "yuno_harem_last_name_v1";
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-const regCountEl    = document.getElementById('regCount');
-const girlNameEl    = document.getElementById('girlName');
-const toRegBtn      = document.getElementById('toRegisterBtn');
-const resetBtn      = document.getElementById('resetBtn');
-const nameWarnEl    = document.getElementById('nameWarn');
-const stepNameEl    = document.getElementById('stepName');
-const stepRegEl     = document.getElementById('stepRegister');
-const summaryEl     = document.getElementById('summaryInput');
-const registerBtn   = document.getElementById('registerBtn');
-const backBtn       = document.getElementById('backBtn');
-const heroTitle     = document.getElementById('heroTitle');
-const stepKicker    = document.getElementById('stepKicker');
-const heroSub       = document.getElementById('heroSub');
-const statusText    = document.getElementById('statusText');
-const successOverlay= document.getElementById('successOverlay');
-const successName   = document.getElementById('successName');
-
-function getCount(){ const n=Number(localStorage.getItem(STORAGE_COUNT)); return Number.isFinite(n)&&n>=0?n:0; }
-function setCount(n){ localStorage.setItem(STORAGE_COUNT,String(n)); regCountEl.textContent=String(n); }
-function clean(s){ return (s||'').trim().replace(/\s+/g,' ').replace(/[<>]/g,''); }
-function valid(s){ return clean(s).length >= 2; }
-
-function showStep(n){
-  if(n===1){
-    stepNameEl.classList.remove('hidden');
-    stepRegEl.classList.add('hidden');
-    stepKicker.textContent = 'Шаг 1 из 2';
-    heroTitle.innerHTML = 'Введи своё <em>имя</em>';
-    heroSub.textContent = 'Первый шаг — твоё имя. Затем финальное подтверждение, и ты окажешься там, где тебя ждут.';
-    statusText.textContent = 'Готова начать';
-  } else {
-    stepNameEl.classList.add('hidden');
-    stepRegEl.classList.remove('hidden');
-    stepKicker.textContent = 'Шаг 2 из 2';
-    heroTitle.innerHTML = 'Последний <em>шаг</em>';
-    heroSub.textContent = 'Убедись, что имя верно — и жми кнопку. Telegram откроется автоматически.';
-    statusText.textContent = 'Почти готово…';
-  }
+function switchTab(btn,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
 }
-
-// init
-setCount(getCount());
-const saved = localStorage.getItem(STORAGE_LASTNAME);
-if(saved) girlNameEl.value = saved;
-
-// step 1 → 2
-toRegBtn.addEventListener('click', ()=>{
-  const name = clean(girlNameEl.value);
-  if(!valid(name)){ nameWarnEl.classList.remove('hidden'); girlNameEl.focus(); return; }
-  nameWarnEl.classList.add('hidden');
-  localStorage.setItem(STORAGE_LASTNAME, name);
-  summaryEl.value = name;
-  showStep(2);
-});
-
-backBtn.addEventListener('click', ()=>{ showStep(1); girlNameEl.focus(); });
-
-resetBtn.addEventListener('click', ()=>{
-  localStorage.removeItem(STORAGE_LASTNAME);
-  girlNameEl.value=''; nameWarnEl.classList.add('hidden'); showStep(1); girlNameEl.focus();
-});
-
-registerBtn.addEventListener('click', ()=>{
-  const name = clean(girlNameEl.value);
-  if(!valid(name)){ showStep(1); nameWarnEl.classList.remove('hidden'); girlNameEl.focus(); return; }
-  setCount(getCount()+1);
-
-  // show success overlay
-  successName.textContent = name + ' — добро пожаловать';
-  successOverlay.classList.add('show');
-  statusText.textContent = 'Открываю Telegram…';
-
-  setTimeout(()=>{ window.location.replace(TELEGRAM_INVITE); }, 1100);
-});
-
-girlNameEl.addEventListener('input', ()=>{
-  if(!nameWarnEl.classList.contains('hidden') && valid(girlNameEl.value))
-    nameWarnEl.classList.add('hidden');
-});
-girlNameEl.addEventListener('keydown', e=>{
-  if(e.key==='Enter'){
-    if(!stepRegEl.classList.contains('hidden')) registerBtn.click();
-    else toRegBtn.click();
-  }
-});
 </script>
 </body>
 </html>
