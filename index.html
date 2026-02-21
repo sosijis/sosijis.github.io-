@@ -1,482 +1,698 @@
 <!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Гарем Юно — регистрация</title>
-    <style>
-        :root{
-            --bg1:#0b0b14;
-            --bg2:#121229;
-            --card:#121225cc;
-            --stroke:#ffffff1a;
-            --text:#f7f7ff;
-            --muted:#c9c9e6;
-            --accent:#b38bff;
-            --accent2:#57d2ff;
-            --danger:#ff5a7a;
-            --ok:#3dffb5;
-            --shadow: 0 20px 60px rgba(0,0,0,.55);
-            --r: 22px;
-            --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue";
-        }
-        *{box-sizing:border-box}
-        body{
-            margin:0;
-            font-family:var(--font);
-            color:var(--text);
-            min-height:100vh;
-            background:
-                    radial-gradient(1200px 800px at 20% 20%, rgba(179,139,255,.25), transparent 60%),
-                    radial-gradient(900px 700px at 80% 30%, rgba(87,210,255,.20), transparent 55%),
-                    radial-gradient(900px 700px at 50% 90%, rgba(255,90,122,.12), transparent 55%),
-                    linear-gradient(180deg, var(--bg1), var(--bg2));
-            display:grid;
-            place-items:center;
-            padding:28px;
-            overflow-x:hidden;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Гарем Юно</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #03020a;
+      --deep: #080614;
+      --void: #0d0b1a;
+      --text: #f0eeff;
+      --muted: #9b95c9;
+      --accent: #c8a8ff;
+      --accent2: #7de8f0;
+      --accent3: #ff8eb0;
+      --glow1: rgba(200,168,255,0.22);
+      --glow2: rgba(125,232,240,0.18);
+      --glow3: rgba(255,142,176,0.14);
+      --r: 20px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .wrap{
-            width:min(980px, 100%);
-            display:grid;
-            gap:18px;
-            position:relative;
-        }
+    html { height: 100%; }
 
-        .topbar{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:12px;
-            padding:14px 16px;
-            border:1px solid var(--stroke);
-            border-radius:16px;
-            background:rgba(255,255,255,.04);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 10px 30px rgba(0,0,0,.25);
-        }
-        .brand{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            min-width:0;
-        }
-        .logo{
-            width:34px;height:34px;border-radius:12px;
-            background:
-                    radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.8), transparent 60%),
-                    linear-gradient(135deg, var(--accent), var(--accent2));
-            box-shadow: 0 10px 30px rgba(179,139,255,.25);
-            border:1px solid rgba(255,255,255,.16);
-            flex:0 0 auto;
-        }
-        .brand h1{
-            font-size:14px;
-            margin:0;
-            letter-spacing:.5px;
-            font-weight:750;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-        }
-        .pill{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:10px 12px;
-            border-radius:999px;
-            border:1px solid var(--stroke);
-            background:rgba(255,255,255,.04);
-            font-size:13px;
-            color:var(--muted);
-            white-space:nowrap;
-        }
-        .dot{
-            width:8px;height:8px;border-radius:50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), transparent 55%), var(--ok);
-            box-shadow: 0 0 0 6px rgba(61,255,181,.12);
-        }
-        .count{
-            color:var(--text);
-            font-weight:800;
-            letter-spacing:.2px;
-        }
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      background: var(--black);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        .card{
-            border:1px solid var(--stroke);
-            border-radius:var(--r);
-            background:var(--card);
-            backdrop-filter: blur(14px);
-            box-shadow: var(--shadow);
-            overflow:hidden;
-            position:relative;
-        }
-        .card::before{
-            content:"";
-            position:absolute; inset:-1px;
-            background:
-                    radial-gradient(700px 320px at 20% 0%, rgba(179,139,255,.20), transparent 60%),
-                    radial-gradient(700px 320px at 80% 20%, rgba(87,210,255,.18), transparent 60%);
-            pointer-events:none;
-        }
-        .card-inner{
-            position:relative;
-            padding:26px;
-            display:grid;
-            gap:18px;
-        }
+    /* ─── CANVAS BG ─── */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .hero{
-            display:grid;
-            gap:8px;
-        }
-        .hero .kicker{
-            color:rgba(255,255,255,.65);
-            font-weight:650;
-            letter-spacing:.15em;
-            text-transform:uppercase;
-            font-size:11px;
-        }
-        .hero h2{
-            margin:0;
-            font-size:28px;
-            line-height:1.08;
-            letter-spacing:-.02em;
-        }
-        .hero p{
-            margin:0;
-            color:var(--muted);
-            font-size:14px;
-            line-height:1.5;
-            max-width:62ch;
-        }
+    /* ─── MESH GRADIENTS ─── */
+    .mesh {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse 1000px 700px at 15% 20%, var(--glow1), transparent 55%),
+        radial-gradient(ellipse 800px 700px at 85% 15%, var(--glow2), transparent 55%),
+        radial-gradient(ellipse 800px 800px at 50% 95%, var(--glow3), transparent 55%),
+        radial-gradient(ellipse 600px 400px at 70% 55%, rgba(200,168,255,0.07), transparent 60%);
+      animation: meshPulse 12s ease-in-out infinite alternate;
+    }
+    @keyframes meshPulse {
+      0%   { opacity: .85; transform: scale(1); }
+      50%  { opacity: 1;   transform: scale(1.03); }
+      100% { opacity: .9;  transform: scale(.98); }
+    }
 
-        .steps{
-            display:grid;
-            grid-template-columns: 1fr;
-            gap:12px;
-        }
+    /* ─── NOISE TEXTURE OVERLAY ─── */
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px;
+    }
 
-        .panel{
-            border:1px solid var(--stroke);
-            border-radius:18px;
-            background: rgba(0,0,0,.18);
-            padding:16px;
-            display:grid;
-            gap:12px;
-        }
+    /* ─── MAIN LAYOUT ─── */
+    .scene {
+      position: relative;
+      z-index: 10;
+      width: min(940px, 100%);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
 
-        .row{
-            display:grid;
-            grid-template-columns: 1fr;
-            gap:10px;
-        }
-        label{
-            font-size:12px;
-            color:rgba(255,255,255,.7);
-            letter-spacing:.04em;
-        }
-        input{
-            width:100%;
-            padding:14px 14px;
-            border-radius:14px;
-            border:1px solid rgba(255,255,255,.14);
-            background: rgba(255,255,255,.06);
-            color:var(--text);
-            outline:none;
-            font-size:15px;
-            transition: .2s ease;
-        }
-        input::placeholder{color: rgba(255,255,255,.45)}
-        input:focus{
-            border-color: rgba(179,139,255,.55);
-            box-shadow: 0 0 0 5px rgba(179,139,255,.18);
-            background: rgba(255,255,255,.08);
-        }
+    /* ─── TOP BAR ─── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 18px;
+      border: 1px solid rgba(200,168,255,.18);
+      border-radius: 100px;
+      background: rgba(13,11,26,.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 4px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+      animation: fadeSlideDown .8s cubic-bezier(.22,1,.36,1) both;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+    .logo-mark {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 8px 24px rgba(200,168,255,.35);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,.3) 0%, transparent 60%);
+    }
+    .brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: .06em;
+      white-space: nowrap;
+    }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11.5px;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #3dffb5;
+      box-shadow: 0 0 0 4px rgba(61,255,181,.18), 0 0 12px rgba(61,255,181,.5);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(61,255,181,.18), 0 0 12px rgba(61,255,181,.5); }
+      50%       { box-shadow: 0 0 0 8px rgba(61,255,181,.06), 0 0 24px rgba(61,255,181,.7); }
+    }
+    .live-count {
+      color: var(--text);
+      font-weight: 400;
+    }
 
-        .actions{
-            display:flex;
-            flex-wrap:wrap;
-            gap:10px;
-            align-items:center;
-            justify-content:flex-start;
-            margin-top:2px;
-        }
+    /* ─── CARD ─── */
+    .card {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(200,168,255,.14);
+      background: rgba(8,6,20,.6);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow:
+        0 40px 80px rgba(0,0,0,.7),
+        0 0 0 1px rgba(255,255,255,.04) inset,
+        0 1px 0 rgba(255,255,255,.08) inset;
+      animation: fadeSlideUp .9s .15s cubic-bezier(.22,1,.36,1) both;
+    }
 
-        button{
-            border:none;
-            cursor:pointer;
-            padding:12px 14px;
-            border-radius:14px;
-            font-weight:800;
-            letter-spacing:.02em;
-            transition:.2s ease;
-            color:#0b0b14;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            box-shadow: 0 16px 40px rgba(179,139,255,.25);
-        }
-        button:hover{ transform: translateY(-1px); filter: brightness(1.03) }
-        button:active{ transform: translateY(0px); filter: brightness(.98) }
+    /* inner glow top */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,168,255,.6) 30%, rgba(125,232,240,.5) 60%, transparent);
+    }
+    /* light flare top-right */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(125,232,240,.12), transparent 65%);
+      pointer-events: none;
+    }
 
-        .ghost{
-            background: transparent;
-            color: rgba(255,255,255,.9);
-            border: 1px solid rgba(255,255,255,.18);
-            box-shadow:none;
-        }
-        .ghost:hover{ background: rgba(255,255,255,.06) }
+    .card-body {
+      position: relative;
+      padding: 40px 36px 36px;
+      display: grid;
+      gap: 32px;
+    }
 
-        .hint{
-            font-size:12px;
-            color: rgba(255,255,255,.60);
-            line-height:1.4;
-        }
-        .warn{
-            color: rgba(255,90,122,.95);
-            font-weight:700;
-        }
+    /* ─── HERO ─── */
+    .hero {
+      display: grid;
+      gap: 10px;
+      max-width: 580px;
+    }
+    .kicker {
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: .85;
+      animation: fadeSlideUp .7s .3s both;
+    }
+    .hero-title {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 300;
+      line-height: 1.04;
+      letter-spacing: -.01em;
+      animation: fadeSlideUp .7s .4s both;
+    }
+    .hero-title em {
+      font-style: italic;
+      background: linear-gradient(95deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.55;
+      animation: fadeSlideUp .7s .5s both;
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 4px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(200,168,255,.22);
+      background: rgba(200,168,255,.07);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .06em;
+      color: var(--accent);
+      width: fit-content;
+      animation: fadeSlideUp .7s .6s both;
+      transition: border-color .3s, background .3s;
+    }
+    .status-spark {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: sparkle 2.5s ease-in-out infinite;
+    }
+    @keyframes sparkle {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.4); opacity: .7; }
+    }
 
-        .divider{
-            height:1px;
-            background: rgba(255,255,255,.10);
-            margin:2px 0;
-        }
+    /* ─── STEP PANELS ─── */
+    .steps-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      animation: fadeSlideUp .7s .7s both;
+    }
 
-        .badge{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            font-size:12px;
-            color: rgba(255,255,255,.78);
-            padding:8px 10px;
-            border-radius:999px;
-            border:1px solid rgba(255,255,255,.16);
-            background: rgba(255,255,255,.05);
-            width:fit-content;
-        }
-        .spark{
-            width:10px;height:10px;border-radius:50%;
-            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.9), transparent 55%), var(--accent);
-            box-shadow: 0 0 0 6px rgba(179,139,255,.15);
-        }
+    .step-panel {
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      background: rgba(0,0,0,.2);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transition: border-color .4s, box-shadow .4s;
+    }
+    .step-panel:hover {
+      border-color: rgba(200,168,255,.22);
+      box-shadow: 0 0 0 1px rgba(200,168,255,.08);
+    }
 
-        .hidden{ display:none !important; }
+    .field-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 6px;
+    }
 
-        .footer{
-            text-align:center;
-            font-size:12px;
-            color: rgba(255,255,255,.45);
-            padding: 8px 0 0;
-        }
+    input[type="text"], input[readonly] {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      outline: none;
+      letter-spacing: .02em;
+      transition: border-color .25s, box-shadow .25s, background .25s;
+    }
+    input::placeholder { color: rgba(255,255,255,.28); font-style: italic; }
+    input:focus {
+      border-color: rgba(200,168,255,.5);
+      background: rgba(200,168,255,.05);
+      box-shadow: 0 0 0 4px rgba(200,168,255,.12);
+    }
+    input[readonly] {
+      border-color: rgba(200,168,255,.22);
+      background: rgba(200,168,255,.06);
+      color: var(--accent);
+      cursor: default;
+    }
 
-        @media (min-width: 860px){
-            .card-inner{ padding:32px; }
-            .steps{ grid-template-columns: 1.08fr .92fr; align-items:start; }
-            .hero h2{ font-size:34px; }
-        }
-    </style>
+    .hint-text {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(255,255,255,.45);
+      line-height: 1.5;
+    }
+    .hint-text.warn { color: rgba(255,142,176,.9); font-style: italic; }
+
+    /* ─── BUTTONS ─── */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      position: relative;
+      border: none;
+      cursor: pointer;
+      padding: 13px 24px;
+      border-radius: 14px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      transition: transform .18s cubic-bezier(.22,1,.36,1), box-shadow .18s, filter .18s;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,.15) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .btn:hover::before { opacity: 1; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #07051a;
+      box-shadow: 0 12px 36px rgba(200,168,255,.35), 0 4px 12px rgba(0,0,0,.3);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 18px 48px rgba(200,168,255,.45), 0 6px 16px rgba(0,0,0,.3);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,.65);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: none;
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-color: rgba(255,255,255,.25);
+    }
+
+    /* ─── DIVIDER ─── */
+    .div-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.1) 30%, rgba(255,255,255,.1) 70%, transparent);
+    }
+
+    /* ─── FOOTER ─── */
+    .card-footer {
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: .06em;
+      color: rgba(255,255,255,.3);
+      text-align: center;
+      padding: 0 0 4px;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden { display: none !important; }
+
+    /* ─── STEP TRANSITION ─── */
+    .step-panel {
+      animation: fadeSlideUp .45s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    /* ─── SUCCESS OVERLAY ─── */
+    .success-overlay {
+      position: fixed; inset: 0;
+      background: rgba(3,2,10,.95);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+      flex-direction: column;
+      gap: 18px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .5s ease;
+    }
+    .success-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .success-ring {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+      box-shadow: 0 0 0 16px rgba(200,168,255,.07), 0 0 48px rgba(200,168,255,.35);
+      animation: ringPop .6s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes ringPop {
+      from { transform: scale(.5); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .success-text {
+      font-size: 26px;
+      font-weight: 300;
+      letter-spacing: .04em;
+      text-align: center;
+    }
+    .success-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      animation: fadeSlideUp .5s .25s both;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (min-width: 720px) {
+      .card-body { padding: 48px 48px 42px; }
+      .steps-wrap { grid-template-columns: 1.1fr .9fr; align-items: start; }
+      .hero-title { font-size: 54px; }
+    }
+  </style>
 </head>
-
 <body>
-<div class="wrap">
-    <div class="topbar">
-        <div class="brand">
-            <div class="logo" aria-hidden="true"></div>
-            <h1>Гарем Юно • закрытая регистрация</h1>
-        </div>
 
-        <div class="pill" title="Счётчик в одном файле без сервера работает только в этом браузере">
-            <span class="dot" aria-hidden="true"></span>
-            <span>Зарегистрировано:</span>
-            <span class="count" id="regCount">0</span>
-        </div>
-    </div>
+<canvas id="starfield"></canvas>
+<div class="mesh"></div>
+<div class="noise"></div>
 
-    <div class="card">
-        <div class="card-inner">
-            <div class="hero">
-                <div class="kicker">Шаг 1 из 2</div>
-                <h2 id="headline">Введи свое имя</h2>
-                <p id="subhead">
-                    Сделаем красиво: сначала имя, затем регистрация — и после подтверждения тебя перекинет в Telegram по ссылке приглашения.
-                </p>
-                <div class="badge"><span class="spark"></span><span id="statusLine">Готово к вводу</span></div>
-            </div>
-
-            <div class="steps">
-                <!-- Step 1 -->
-                <div class="panel" id="stepName">
-                    <div class="row">
-                        <label for="girlName">Имя парня</label>
-                        <input id="girlName" placeholder="Например: Алиса" autocomplete="off" maxlength="32" />
-                        <div class="hint" id="nameHint">Никаких лишних данных — только имя.</div>
-                    </div>
-                    <div class="actions">
-                        <button id="toRegisterBtn">Продолжить</button>
-                        <button class="ghost" id="resetBtn" type="button">Сброс</button>
-                    </div>
-                    <div class="hint warn hidden" id="nameWarn">Введи имя (минимум 2 символа).</div>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="panel hidden" id="stepRegister">
-                    <div class="row">
-                        <label>Профиль</label>
-                        <input id="summary" readonly />
-                        <div class="divider"></div>
-                        <div class="hint">
-                            Нажми “Зарегистрироваться” — и откроется Telegram приглашение.
-                            <span class="warn">(После клика отменить нельзя.)</span>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button id="registerBtn">Зарегистрироваться</button>
-                        <button class="ghost" id="backBtn" type="button">Назад</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer">
-                ⚠️ Счётчик “зарегистрировано” сохраняется только на этом устройстве (без сервера).
-            </div>
-        </div>
-    </div>
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-ring">✦</div>
+  <div class="success-text">Добро пожаловать</div>
+  <div class="success-sub" id="successName">в Гарем Юно</div>
 </div>
 
+<div class="scene">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo-mark">✦</div>
+      <span class="brand-name">Гарем Юно &nbsp;·&nbsp; Закрытая регистрация</span>
+    </div>
+    <div class="live-badge">
+      <span class="live-dot"></span>
+      <span>зарегистрировано:</span>
+      <span class="live-count" id="regCount">0</span>
+    </div>
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+    <div class="card-body">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="kicker" id="stepKicker">Шаг 1 из 2</div>
+        <h1 class="hero-title" id="heroTitle">Введи своё <em>имя</em></h1>
+        <p class="hero-sub" id="heroSub">
+          Первый шаг — твоё имя. Затем финальное подтверждение, и ты окажешься там, где тебя ждут.
+        </p>
+        <div class="status-tag" id="statusTag">
+          <span class="status-spark"></span>
+          <span id="statusText">Готова начать</span>
+        </div>
+      </div>
+
+      <!-- STEPS -->
+      <div class="steps-wrap">
+
+        <!-- Step 1 -->
+        <div class="step-panel" id="stepName">
+          <div>
+            <div class="field-label">Имя</div>
+            <input type="text" id="girlName" placeholder="Твоё имя…" autocomplete="off" maxlength="32" />
+          </div>
+          <div class="hint-text">Только имя — никакой лишней информации.</div>
+          <div class="hint-text warn hidden" id="nameWarn">Введи имя (минимум 2 символа)</div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="toRegisterBtn">Продолжить →</button>
+            <button class="btn btn-ghost" id="resetBtn">Сброс</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-panel hidden" id="stepRegister">
+          <div>
+            <div class="field-label">Профиль</div>
+            <input type="text" id="summaryInput" readonly />
+          </div>
+          <div class="div-line"></div>
+          <div class="hint-text">
+            Нажми кнопку — откроется приглашение в Telegram.
+            <br/><span style="color:rgba(255,142,176,.7)">Действие необратимо.</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="registerBtn">Войти ✦</button>
+            <button class="btn btn-ghost" id="backBtn">← Назад</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="card-footer">
+        ⚠ &nbsp;Счётчик хранится только на этом устройстве — без серверов, без трекинга.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCRIPTS ─── -->
 <script>
-    // ====== настройки ======
-    const TELEGRAM_INVITE = "https://t.me/+bg5iT_RAwv4wMjBi";
-    const STORAGE_KEY_COUNT = "yuno_harem_reg_count_v1";
-    const STORAGE_KEY_LASTNAME = "yuno_harem_last_name_v1";
+// ── Starfield canvas ──────────────────────────────────────────
+(function(){
+  const cvs = document.getElementById('starfield');
+  const ctx = cvs.getContext('2d');
+  let W, H, stars = [];
 
-    // ====== элементы ======
-    const regCountEl = document.getElementById("regCount");
-    const girlNameEl = document.getElementById("girlName");
-    const toRegisterBtn = document.getElementById("toRegisterBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const nameWarnEl = document.getElementById("nameWarn");
+  function resize(){
+    W = cvs.width  = window.innerWidth;
+    H = cvs.height = window.innerHeight;
+  }
 
-    const stepName = document.getElementById("stepName");
-    const stepRegister = document.getElementById("stepRegister");
-    const summaryEl = document.getElementById("summary");
-    const registerBtn = document.getElementById("registerBtn");
-    const backBtn = document.getElementById("backBtn");
+  function makeStar(){
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.1 + .15,
+      a: Math.random(),
+      da: (Math.random() * .003 + .0005) * (Math.random() < .5 ? 1 : -1),
+      hue: Math.random() < .3 ? 260 + Math.random()*40 : (Math.random() < .5 ? 180+Math.random()*20 : 0),
+    };
+  }
 
-    const headline = document.getElementById("headline");
-    const statusLine = document.getElementById("statusLine");
+  function init(){
+    resize();
+    stars = Array.from({length: 220}, makeStar);
+  }
 
-    // ====== utils ======
-    function getCount(){
-        const raw = localStorage.getItem(STORAGE_KEY_COUNT);
-        const n = Number(raw);
-        return Number.isFinite(n) && n >= 0 ? n : 0;
-    }
-    function setCount(n){
-        localStorage.setItem(STORAGE_KEY_COUNT, String(n));
-        regCountEl.textContent = String(n);
-    }
-    function sanitizeName(s){
-        // убираем лишние пробелы, запрещаем опасные символы (на всякий)
-        return (s || "")
-            .trim()
-            .replace(/\s+/g, " ")
-            .replace(/[<>]/g, "");
-    }
-    function validName(s){
-        const t = sanitizeName(s);
-        return t.length >= 2;
-    }
-
-    function showStep(which){
-        if(which === 1){
-            stepName.classList.remove("hidden");
-            stepRegister.classList.add("hidden");
-            headline.textContent = "Свок имя";
-            statusLine.textContent = "Готово к вводу";
-        } else {
-            stepName.classList.add("hidden");
-            stepRegister.classList.remove("hidden");
-            headline.textContent = "Регистрация";
-            statusLine.textContent = "Почти готово";
-        }
-    }
-
-    // ====== init ======
-    setCount(getCount());
-
-    // восстановим имя, если было
-    const lastName = localStorage.getItem(STORAGE_KEY_LASTNAME);
-    if(lastName){
-        girlNameEl.value = lastName;
-    }
-
-    // ====== handlers ======
-    toRegisterBtn.addEventListener("click", () => {
-        const name = sanitizeName(girlNameEl.value);
-        if(!validName(name)){
-            nameWarnEl.classList.remove("hidden");
-            girlNameEl.focus();
-            return;
-        }
-        nameWarnEl.classList.add("hidden");
-        localStorage.setItem(STORAGE_KEY_LASTNAME, name);
-
-        summaryEl.value = `Имя: ${name}`;
-        showStep(2);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s => {
+      s.a += s.da;
+      if(s.a > 1 || s.a < 0) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = s.hue === 0
+        ? `rgba(255,255,255,${s.a * .9})`
+        : `hsla(${s.hue}, 80%, 80%, ${s.a * .7})`;
+      ctx.fill();
     });
+    requestAnimationFrame(draw);
+  }
 
-    backBtn.addEventListener("click", () => {
-        showStep(1);
-        girlNameEl.focus();
-    });
+  window.addEventListener('resize', ()=>{ resize(); });
+  init();
+  draw();
+})();
 
-    resetBtn.addEventListener("click", () => {
-        localStorage.removeItem(STORAGE_KEY_LASTNAME);
-        girlNameEl.value = "";
-        nameWarnEl.classList.add("hidden");
-        showStep(1);
-        girlNameEl.focus();
-    });
+// ── App logic ──────────────────────────────────────────────────
+const TELEGRAM_INVITE  = "https://t.me/+bg5iT_RAwv4wMjBi";
+const STORAGE_COUNT    = "yuno_harem_reg_count_v1";
+const STORAGE_LASTNAME = "yuno_harem_last_name_v1";
 
-    registerBtn.addEventListener("click", () => {
-        const name = sanitizeName(girlNameEl.value);
-        if(!validName(name)){
-            showStep(1);
-            nameWarnEl.classList.remove("hidden");
-            girlNameEl.focus();
-            return;
-        }
+const regCountEl    = document.getElementById('regCount');
+const girlNameEl    = document.getElementById('girlName');
+const toRegBtn      = document.getElementById('toRegisterBtn');
+const resetBtn      = document.getElementById('resetBtn');
+const nameWarnEl    = document.getElementById('nameWarn');
+const stepNameEl    = document.getElementById('stepName');
+const stepRegEl     = document.getElementById('stepRegister');
+const summaryEl     = document.getElementById('summaryInput');
+const registerBtn   = document.getElementById('registerBtn');
+const backBtn       = document.getElementById('backBtn');
+const heroTitle     = document.getElementById('heroTitle');
+const stepKicker    = document.getElementById('stepKicker');
+const heroSub       = document.getElementById('heroSub');
+const statusText    = document.getElementById('statusText');
+const successOverlay= document.getElementById('successOverlay');
+const successName   = document.getElementById('successName');
 
-        // увеличиваем "локальный" счетчик
-        const next = getCount() + 1;
-        setCount(next);
+function getCount(){ const n=Number(localStorage.getItem(STORAGE_COUNT)); return Number.isFinite(n)&&n>=0?n:0; }
+function setCount(n){ localStorage.setItem(STORAGE_COUNT,String(n)); regCountEl.textContent=String(n); }
+function clean(s){ return (s||'').trim().replace(/\s+/g,' ').replace(/[<>]/g,''); }
+function valid(s){ return clean(s).length >= 2; }
 
-        // небольшая "вау" анимация текста (без библиотек)
-        statusLine.textContent = "Готово! Перекидываю в Telegram…";
+function showStep(n){
+  if(n===1){
+    stepNameEl.classList.remove('hidden');
+    stepRegEl.classList.add('hidden');
+    stepKicker.textContent = 'Шаг 1 из 2';
+    heroTitle.innerHTML = 'Введи своё <em>имя</em>';
+    heroSub.textContent = 'Первый шаг — твоё имя. Затем финальное подтверждение, и ты окажешься там, где тебя ждут.';
+    statusText.textContent = 'Готова начать';
+  } else {
+    stepNameEl.classList.add('hidden');
+    stepRegEl.classList.remove('hidden');
+    stepKicker.textContent = 'Шаг 2 из 2';
+    heroTitle.innerHTML = 'Последний <em>шаг</em>';
+    heroSub.textContent = 'Убедись, что имя верно — и жми кнопку. Telegram откроется автоматически.';
+    statusText.textContent = 'Почти готово…';
+  }
+}
 
-        // редирект в Telegram
-        // (используем replace, чтобы не возвращаться кнопкой Back на "зарегистрироваться")
-        setTimeout(() => {
-            window.location.replace(TELEGRAM_INVITE);
-        }, 550);
-    });
+// init
+setCount(getCount());
+const saved = localStorage.getItem(STORAGE_LASTNAME);
+if(saved) girlNameEl.value = saved;
 
-    girlNameEl.addEventListener("input", () => {
-        if(nameWarnEl.classList.contains("hidden")) return;
-        if(validName(girlNameEl.value)) nameWarnEl.classList.add("hidden");
-    });
+// step 1 → 2
+toRegBtn.addEventListener('click', ()=>{
+  const name = clean(girlNameEl.value);
+  if(!valid(name)){ nameWarnEl.classList.remove('hidden'); girlNameEl.focus(); return; }
+  nameWarnEl.classList.add('hidden');
+  localStorage.setItem(STORAGE_LASTNAME, name);
+  summaryEl.value = name;
+  showStep(2);
+});
 
-    girlNameEl.addEventListener("keydown", (e) => {
-        if(e.key === "Enter"){
-            // Enter на шаге 1 -> продолжить, на шаге 2 -> регистрация
-            if(!stepRegister.classList.contains("hidden")){
-                registerBtn.click();
-            } else {
-                toRegisterBtn.click();
-            }
-        }
-    });
+backBtn.addEventListener('click', ()=>{ showStep(1); girlNameEl.focus(); });
+
+resetBtn.addEventListener('click', ()=>{
+  localStorage.removeItem(STORAGE_LASTNAME);
+  girlNameEl.value=''; nameWarnEl.classList.add('hidden'); showStep(1); girlNameEl.focus();
+});
+
+registerBtn.addEventListener('click', ()=>{
+  const name = clean(girlNameEl.value);
+  if(!valid(name)){ showStep(1); nameWarnEl.classList.remove('hidden'); girlNameEl.focus(); return; }
+  setCount(getCount()+1);
+
+  // show success overlay
+  successName.textContent = name + ' — добро пожаловать';
+  successOverlay.classList.add('show');
+  statusText.textContent = 'Открываю Telegram…';
+
+  setTimeout(()=>{ window.location.replace(TELEGRAM_INVITE); }, 1100);
+});
+
+girlNameEl.addEventListener('input', ()=>{
+  if(!nameWarnEl.classList.contains('hidden') && valid(girlNameEl.value))
+    nameWarnEl.classList.add('hidden');
+});
+girlNameEl.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    if(!stepRegEl.classList.contains('hidden')) registerBtn.click();
+    else toRegBtn.click();
+  }
+});
 </script>
 </body>
 </html>
