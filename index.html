@@ -8,571 +8,315 @@
     <style>
         :root {
             --bg: #05040e;
-            --card: rgba(12,10,28,.7);
+            --card: rgba(12,10,28,.75);
             --text: #f2f0ff;
             --muted: #9e98cb;
             --a1: #e879f9;
             --a2: #818cf8;
             --a3: #38bdf8;
             --a4: #f472b6;
-            --stroke: rgba(255,255,255,.1);
+            --stroke: rgba(255,255,255,.09);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Raleway', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Raleway', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
         #cvs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-        .mesh {
-            position: fixed; inset: 0; pointer-events: none; z-index: 1;
-            background:
-                    radial-gradient(ellipse 900px 600px at 10% 15%, rgba(232,121,249,.18), transparent 55%),
-                    radial-gradient(ellipse 700px 600px at 90% 20%, rgba(129,140,248,.16), transparent 55%),
-                    radial-gradient(ellipse 700px 700px at 55% 90%, rgba(56,189,248,.13), transparent 55%);
-            animation: mp 14s ease-in-out infinite alternate;
-        }
+        .mesh { position: fixed; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse 900px 600px at 10% 15%, rgba(232,121,249,.15), transparent 55%), radial-gradient(ellipse 700px 600px at 90% 20%, rgba(129,140,248,.12), transparent 55%), radial-gradient(ellipse 700px 700px at 55% 90%, rgba(56,189,248,.1), transparent 55%); animation: mp 14s ease-in-out infinite alternate; }
         @keyframes mp { from{opacity:.8;transform:scale(1)} to{opacity:1;transform:scale(1.04)} }
-        .noise {
-            position: fixed; inset: 0; pointer-events: none; z-index: 2; opacity: .025;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            background-size: 200px;
-        }
+        .noise { position: fixed; inset: 0; pointer-events: none; z-index: 2; opacity: .022; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 200px; }
 
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            padding: 13px 28px;
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
-            background: rgba(5,4,14,.7);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--stroke);
-            animation: fd .8s both;
-        }
-        .nav-logo {
-            font-family: 'Unbounded', sans-serif;
-            font-weight: 900; font-size: 18px; letter-spacing: .08em;
-            background: linear-gradient(90deg, var(--a1), var(--a2), var(--a3));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            white-space: nowrap;
-        }
-        .nav-links { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-        .nav-links a {
-            text-decoration: none; font-size: 12px; letter-spacing: .06em;
-            color: var(--muted); padding: 7px 14px; border-radius: 999px;
-            border: 1px solid transparent; transition: .2s; font-weight: 400;
-        }
-        .nav-links a:hover { color: var(--text); border-color: var(--stroke); background: rgba(255,255,255,.05); }
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: rgba(5,4,14,.68); backdrop-filter: blur(24px); border-bottom: 1px solid var(--stroke); animation: fd .8s both; }
+        .nav-logo { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 17px; letter-spacing: .08em; background: linear-gradient(90deg, var(--a1), var(--a2), var(--a3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap; cursor: pointer; }
+        .nav-links { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+        .nav-links a, .nbtn { text-decoration: none; font-size: 12px; letter-spacing: .05em; color: var(--muted); padding: 7px 13px; border-radius: 999px; border: 1px solid transparent; transition: .2s; font-weight: 400; background: none; cursor: pointer; font-family: 'Raleway', sans-serif; }
+        .nav-links a:hover, .nbtn:hover { color: var(--text); border-color: var(--stroke); background: rgba(255,255,255,.05); }
         .nav-join { padding: 8px 18px !important; background: linear-gradient(135deg,var(--a1),var(--a2)) !important; color: #0a0820 !important; font-weight: 700 !important; border-color: transparent !important; }
-        .nav-join:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        .nav-login-btn {
-            padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(129,140,248,.4);
-            background: rgba(129,140,248,.08); color: var(--a2) !important;
-            font-size: 12px; cursor: pointer; transition: .2s; font-weight: 600;
-        }
-        .nav-login-btn:hover { background: rgba(129,140,248,.18) !important; }
+        .nav-join:hover { filter: brightness(1.12); transform: translateY(-1px); }
+        .nav-login { color: var(--a2) !important; border-color: rgba(129,140,248,.3) !important; background: rgba(129,140,248,.06) !important; }
+        .nav-login:hover { background: rgba(129,140,248,.15) !important; color: var(--text) !important; }
+        .nup { display:flex;align-items:center;gap:8px;padding:5px 13px 5px 5px;border-radius:999px;border:1px solid rgba(244,114,182,.28);background:rgba(244,114,182,.07);cursor:pointer;transition:.2s; }
+        .nup:hover{background:rgba(244,114,182,.14)}
+        .nup-av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#e879f9);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-weight:900;font-size:10px;color:#09071d;}
+        .nup span{font-size:12px;color:var(--a4);font-weight:600}
 
         main { position: relative; z-index: 10; }
         section { padding: 100px 28px 60px; max-width: 1060px; margin: 0 auto; }
 
-        .hero-section {
-            min-height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center; gap: 22px; padding-top: 80px !important;
-        }
-        .hero-eyebrow {
-            font-family: 'Unbounded', sans-serif; font-size: 10px;
-            letter-spacing: .32em; text-transform: uppercase; color: var(--a1); opacity: .9;
-            animation: su .6s .1s both;
-        }
-        .hero-title {
-            font-family: 'Unbounded', sans-serif; font-weight: 900;
-            font-size: clamp(52px, 12vw, 120px); line-height: .95; letter-spacing: -.02em;
-            animation: su .7s .2s both;
-        }
-        .hero-title .g {
-            background: linear-gradient(95deg, var(--a1) 0%, var(--a2) 50%, var(--a3) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
-        .hero-title .outline { color: rgba(255,255,255,.1); -webkit-text-stroke: 1px rgba(255,255,255,.28); }
-        .hero-sub { font-size: 16px; font-weight: 300; color: var(--muted); line-height: 1.6; max-width: 52ch; animation: su .7s .35s both; }
+        .hero-section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px; padding-top: 80px !important; }
+        .hero-eyebrow { font-family: 'Unbounded', sans-serif; font-size: 9px; letter-spacing: .32em; text-transform: uppercase; color: var(--a1); opacity: .85; animation: su .6s .1s both; }
+        .hero-title { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: clamp(56px, 13vw, 130px); line-height: .91; letter-spacing: -.025em; animation: su .7s .2s both; }
+        .hero-title .g { background: linear-gradient(95deg, var(--a1) 0%, var(--a2) 50%, var(--a3) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-title .outline { color: rgba(255,255,255,.07); -webkit-text-stroke: 1px rgba(255,255,255,.2); }
+        .hero-sub { font-size: 15px; font-weight: 300; color: var(--muted); line-height: 1.65; max-width: 50ch; animation: su .7s .35s both; }
         .hero-sub em { color: var(--a4); font-style: normal; }
-        .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; animation: su .7s .5s both; }
-        .live-pill {
-            display: flex; align-items: center; gap: 10px; padding: 9px 18px; border-radius: 999px;
-            border: 1px solid rgba(232,121,249,.25); background: rgba(232,121,249,.07);
-            font-size: 12px; color: var(--a1); letter-spacing: .05em; animation: su .7s .65s both;
-        }
-        .live-dot {
-            width: 8px; height: 8px; border-radius: 50%; background: #a3e635;
-            box-shadow: 0 0 0 5px rgba(163,230,53,.15),0 0 14px rgba(163,230,53,.6);
-            animation: lp 2s infinite;
-        }
-        @keyframes lp {
-            0%,100%{box-shadow:0 0 0 5px rgba(163,230,53,.15),0 0 12px rgba(163,230,53,.6)}
-            50%{box-shadow:0 0 0 10px rgba(163,230,53,.05),0 0 24px rgba(163,230,53,.8)}
-        }
+        .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; animation: su .7s .5s both; }
+        .live-pill { display: flex; align-items: center; gap: 9px; padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(232,121,249,.2); background: rgba(232,121,249,.055); font-size: 12px; color: var(--a1); letter-spacing: .04em; animation: su .7s .65s both; }
+        .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #a3e635; box-shadow: 0 0 0 4px rgba(163,230,53,.12),0 0 12px rgba(163,230,53,.55); animation: lp 2s infinite; }
+        @keyframes lp { 0%,100%{box-shadow:0 0 0 4px rgba(163,230,53,.12),0 0 10px rgba(163,230,53,.55)} 50%{box-shadow:0 0 0 8px rgba(163,230,53,.04),0 0 20px rgba(163,230,53,.75)} }
 
-        .btn {
-            font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 14px;
-            letter-spacing: .06em; padding: 13px 28px; border-radius: 14px; border: none; cursor: pointer;
-            text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-            transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, filter .2s;
-            position: relative; overflow: hidden;
-        }
-        .btn::before { content:''; position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.18) 0%,transparent 55%);opacity:0;transition:opacity .2s; }
-        .btn:hover::before{opacity:1} .btn:hover{transform:translateY(-3px)} .btn:active{transform:translateY(0)}
-        .btn-pri { background:linear-gradient(135deg,var(--a1),var(--a2)); color:#09071d; box-shadow:0 14px 40px rgba(232,121,249,.35); }
-        .btn-pri:hover{box-shadow:0 20px 50px rgba(232,121,249,.45)}
-        .btn-sec { background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18); }
-        .btn-sec:hover{background:rgba(255,255,255,.06)}
-        .btn-pink { background:linear-gradient(135deg,#f472b6,#e879f9); color:#09071d; box-shadow:0 14px 40px rgba(244,114,182,.35); }
+        .btn { font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: .05em; padding: 13px 26px; border-radius: 14px; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, filter .2s; position: relative; overflow: hidden; }
+        .btn::before { content:''; position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.15) 0%,transparent 55%);opacity:0;transition:opacity .2s; }
+        .btn:hover::before{opacity:1} .btn:hover{transform:translateY(-2px)} .btn:active{transform:translateY(1px)}
+        .btn-pri { background:linear-gradient(135deg,var(--a1),var(--a2)); color:#09071d; box-shadow:0 12px 36px rgba(232,121,249,.28); }
+        .btn-pri:hover{box-shadow:0 18px 48px rgba(232,121,249,.42)}
+        .btn-sec { background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.14); }
+        .btn-sec:hover{background:rgba(255,255,255,.05)}
+        .btn-pink { background:linear-gradient(135deg,#f472b6,#e879f9); color:#09071d; box-shadow:0 12px 36px rgba(244,114,182,.28); }
+        .btn-pink:hover{box-shadow:0 18px 48px rgba(244,114,182,.42)}
+        .btn-sm{font-size:12px;padding:10px 18px;border-radius:10px}
 
-        .card {
-            border:1px solid var(--stroke); border-radius:24px; background:var(--card);
-            backdrop-filter:blur(18px); overflow:hidden; position:relative;
-            box-shadow:0 30px 70px rgba(0,0,0,.55);
-        }
-        .card::before {
-            content:''; position:absolute;top:0;left:0;right:0;height:1px;
-            background:linear-gradient(90deg,transparent,var(--a1) 25%,var(--a2) 55%,var(--a3) 80%,transparent);
-        }
+        .card { border:1px solid var(--stroke); border-radius:24px; background:var(--card); backdrop-filter:blur(18px); overflow:hidden; position:relative; box-shadow:0 28px 64px rgba(0,0,0,.5); }
+        .card::before { content:''; position:absolute;top:0;left:0;right:0;height:1px; background:linear-gradient(90deg,transparent,var(--a1) 25%,var(--a2) 55%,var(--a3) 80%,transparent); }
         .card-inner{padding:30px}
 
-        .sec-label { font-family:'Unbounded',sans-serif;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--a1);margin-bottom:10px;opacity:.85; }
-        .sec-title { font-family:'Unbounded',sans-serif;font-weight:700;font-size:clamp(24px,4vw,40px);line-height:1.1;letter-spacing:-.01em;margin-bottom:14px; }
+        .sec-label { font-family:'Unbounded',sans-serif;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--a1);margin-bottom:10px;opacity:.8; }
+        .sec-title { font-family:'Unbounded',sans-serif;font-weight:700;font-size:clamp(22px,4vw,38px);line-height:1.08;letter-spacing:-.015em;margin-bottom:12px; }
         .sec-title span { background:linear-gradient(90deg,var(--a1),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
-        .sec-sub { font-size:15px;font-weight:300;color:var(--muted);line-height:1.6;max-width:55ch;margin-bottom:36px; }
+        .sec-title .pk { background:linear-gradient(90deg,#f472b6,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+        .sec-sub { font-size:14px;font-weight:300;color:var(--muted);line-height:1.65;max-width:55ch;margin-bottom:32px; }
 
-        .info-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:32px; }
-        .info-card {
-            border:1px solid var(--stroke);border-radius:20px;background:rgba(255,255,255,.03);
-            padding:24px;display:flex;flex-direction:column;gap:10px;
-            transition:border-color .3s,box-shadow .3s,transform .3s;
-        }
-        .info-card:hover{border-color:rgba(232,121,249,.3);box-shadow:0 8px 32px rgba(232,121,249,.1);transform:translateY(-3px)}
-        .info-icon{font-size:28px}
-        .info-card h3{font-family:'Unbounded',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em}
-        .info-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.55}
-        .info-card strong{color:var(--a1);font-weight:600}
+        .info-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:28px; }
+        .info-card { border:1px solid var(--stroke);border-radius:20px;background:rgba(255,255,255,.025);padding:22px;display:flex;flex-direction:column;gap:9px;transition:.3s; }
+        .info-card:hover{border-color:rgba(232,121,249,.28);box-shadow:0 6px 28px rgba(232,121,249,.09);transform:translateY(-3px)}
+        .info-icon{font-size:26px} .info-card h3{font-family:'Unbounded',sans-serif;font-weight:700;font-size:12px;letter-spacing:.04em}
+        .info-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.55} .info-card strong{color:var(--a1);font-weight:600}
 
-        .admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-        .admin-card{border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.03);padding:20px 18px;display:flex;flex-direction:column;gap:8px;transition:.3s}
-        .admin-card:hover{border-color:rgba(129,140,248,.35);background:rgba(129,140,248,.06);transform:translateY(-2px)}
-        .admin-role{font-family:'Unbounded',sans-serif;font-size:8px;letter-spacing:.22em;text-transform:uppercase;padding:4px 10px;border-radius:999px;width:fit-content}
-        .role-owner{background:rgba(232,121,249,.15);color:var(--a1);border:1px solid rgba(232,121,249,.3)}
-        .role-deputy{background:rgba(244,114,182,.12);color:var(--a4);border:1px solid rgba(244,114,182,.3)}
-        .role-senior{background:rgba(129,140,248,.12);color:var(--a2);border:1px solid rgba(129,140,248,.3)}
-        .role-junior{background:rgba(56,189,248,.1);color:var(--a3);border:1px solid rgba(56,189,248,.25)}
-        .admin-name{font-weight:600;font-size:15px}
-        .admin-handle{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
-        .admin-handle:hover{color:var(--a2)}
-        .admin-desc{font-size:12px;font-weight:300;color:rgba(255,255,255,.4);line-height:1.45}
+        .admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+        .admin-card{border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.025);padding:20px 16px;display:flex;flex-direction:column;gap:7px;transition:.3s}
+        .admin-card:hover{border-color:rgba(129,140,248,.32);background:rgba(129,140,248,.05);transform:translateY(-2px)}
+        .admin-role{font-family:'Unbounded',sans-serif;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:4px 10px;border-radius:999px;width:fit-content}
+        .role-owner{background:rgba(232,121,249,.13);color:var(--a1);border:1px solid rgba(232,121,249,.26)} .role-deputy{background:rgba(244,114,182,.1);color:var(--a4);border:1px solid rgba(244,114,182,.26)} .role-senior{background:rgba(129,140,248,.1);color:var(--a2);border:1px solid rgba(129,140,248,.26)} .role-junior{background:rgba(56,189,248,.09);color:var(--a3);border:1px solid rgba(56,189,248,.22)}
+        .admin-name{font-weight:700;font-size:15px} .admin-handle{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s} .admin-handle:hover{color:var(--a2)} .admin-desc{font-size:12px;font-weight:300;color:rgba(255,255,255,.35);line-height:1.45}
 
-        .fandom-list{display:flex;flex-direction:column;gap:10px}
-        .fandom-block{border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.025);overflow:hidden;transition:.3s}
-        .fandom-block:hover{border-color:rgba(232,121,249,.2)}
-        .fandom-header{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
-        .fandom-name{font-family:'Unbounded',sans-serif;font-weight:700;font-size:12px;letter-spacing:.05em;flex:1}
-        .fandom-count{font-size:11px;color:var(--muted);padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.06)}
-        .fandom-arrow{font-size:10px;color:var(--muted);transition:transform .25s}
-        .fandom-block.open .fandom-arrow{transform:rotate(180deg)}
-        .fandom-roles{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.22,1,.36,1),padding .3s}
-        .fandom-block.open .fandom-roles{max-height:400px;padding-bottom:14px}
-        .role-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.05)}
-        .role-char{font-size:14px;flex:1}
-        .role-user{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
-        .role-user:hover{color:var(--a1)}
-        .role-taken{font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(248,113,113,.08);color:#fca5a5;border:1px solid rgba(248,113,113,.18)}
-        .role-reserved{font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(251,191,36,.08);color:#fcd34d;border:1px solid rgba(251,191,36,.2)}
+        .fandom-list{display:flex;flex-direction:column;gap:8px}
+        .fandom-block{border:1px solid var(--stroke);border-radius:14px;background:rgba(255,255,255,.02);overflow:hidden;transition:.25s} .fandom-block:hover{border-color:rgba(232,121,249,.18)}
+        .fandom-header{padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+        .fandom-name{font-family:'Unbounded',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;flex:1} .fandom-count{font-size:10px;color:var(--muted);padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.055)} .fandom-arrow{font-size:9px;color:var(--muted);transition:transform .25s} .fandom-block.open .fandom-arrow{transform:rotate(180deg)}
+        .fandom-roles{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.22,1,.36,1),padding .3s} .fandom-block.open .fandom-roles{max-height:500px;padding-bottom:12px}
+        .role-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(255,255,255,.045)} .role-char{font-size:13px;flex:1} .role-user{font-size:11px;color:var(--muted);text-decoration:none;transition:color .2s} .role-user:hover{color:var(--a1)}
+        .role-taken{font-size:10px;padding:3px 9px;border-radius:999px;background:rgba(248,113,113,.07);color:#fca5a5;border:1px solid rgba(248,113,113,.15)} .role-reserved{font-size:10px;padding:3px 9px;border-radius:999px;background:rgba(251,191,36,.07);color:#fcd34d;border:1px solid rgba(251,191,36,.18)}
 
-        .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
-        .tab{padding:8px 18px;border-radius:999px;border:1px solid var(--stroke);background:transparent;font-family:'Raleway',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;transition:.2s}
-        .tab.active,.tab:hover{border-color:var(--a1);color:var(--a1);background:rgba(232,121,249,.08)}
-        .tab-content{display:none} .tab-content.active{display:block}
-        .rule-list{display:flex;flex-direction:column;gap:10px}
-        .rule-item{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:14px;border:1px solid var(--stroke);background:rgba(255,255,255,.025)}
-        .rule-num{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;color:var(--a1);min-width:24px;padding-top:2px}
-        .rule-text{font-size:14px;font-weight:300;color:var(--muted);line-height:1.55}
-        .rule-text strong{color:var(--text);font-weight:600}
+        .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px} .tab{padding:7px 16px;border-radius:999px;border:1px solid var(--stroke);background:transparent;font-family:'Raleway',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;transition:.2s} .tab.active,.tab:hover{border-color:var(--a1);color:var(--a1);background:rgba(232,121,249,.07)} .tab-content{display:none} .tab-content.active{display:block}
+        .rule-list{display:flex;flex-direction:column;gap:8px} .rule-item{display:flex;gap:14px;align-items:flex-start;padding:13px 15px;border-radius:12px;border:1px solid var(--stroke);background:rgba(255,255,255,.02)} .rule-num{font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;color:var(--a1);min-width:22px;padding-top:2px} .rule-text{font-size:13px;font-weight:300;color:var(--muted);line-height:1.55} .rule-text strong{color:var(--text);font-weight:600}
 
-        .join-box{text-align:center;padding:64px 32px;display:flex;flex-direction:column;align-items:center;gap:20px}
-        .join-emoji{font-size:56px;animation:bounce 2s ease-in-out infinite}
+        .join-box{text-align:center;padding:60px 32px;display:flex;flex-direction:column;align-items:center;gap:18px}
+        .join-emoji{font-size:52px;animation:bounce 2.4s ease-in-out infinite}
         @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
-        /* ============ HAREM EVENT ============ */
-        #harem {
-            position: relative;
-        }
-        .harem-banner {
-            border: 1px solid rgba(244,114,182,.3);
-            border-radius: 28px;
-            background: linear-gradient(135deg, rgba(244,114,182,.08) 0%, rgba(232,121,249,.06) 50%, rgba(129,140,248,.08) 100%);
-            backdrop-filter: blur(18px);
-            overflow: hidden;
-            position: relative;
-            padding: 48px 40px;
-            margin-bottom: 32px;
-        }
-        .harem-banner::before {
-            content:''; position:absolute;top:0;left:0;right:0;height:2px;
-            background:linear-gradient(90deg, transparent, #f472b6 20%, #e879f9 50%, #818cf8 80%, transparent);
-        }
-        .harem-banner::after {
-            content: '♡'; position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
-            font-size: 120px; opacity: .04; pointer-events: none; line-height: 1;
-        }
-        .harem-tag {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: 'Unbounded', sans-serif; font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
-            color: var(--a4); border: 1px solid rgba(244,114,182,.3); border-radius: 999px;
-            padding: 5px 14px; margin-bottom: 18px;
-            background: rgba(244,114,182,.06);
-            animation: pulse-border 3s ease-in-out infinite;
-        }
-        @keyframes pulse-border {
-            0%,100%{ box-shadow: 0 0 0 0 rgba(244,114,182,0); }
-            50%{ box-shadow: 0 0 0 6px rgba(244,114,182,.08); }
-        }
-        .harem-tag-dot { width:6px;height:6px;border-radius:50%;background:#f472b6;box-shadow:0 0 8px #f472b6;animation:lp 2s infinite; }
-        .harem-title {
-            font-family: 'Unbounded', sans-serif; font-weight: 900;
-            font-size: clamp(28px, 5vw, 52px); line-height: 1.05; letter-spacing: -.02em;
-            margin-bottom: 14px;
-        }
-        .harem-title .pink { background: linear-gradient(90deg, #f472b6, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .harem-desc { font-size: 15px; font-weight: 300; color: var(--muted); line-height: 1.65; max-width: 58ch; margin-bottom: 28px; }
-        .harem-desc strong { color: var(--a4); font-weight: 600; }
-        .harem-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+        /* ===== HAREM ===== */
+        .harem-banner { border:1px solid rgba(244,114,182,.26);border-radius:28px;background:linear-gradient(135deg,rgba(244,114,182,.07),rgba(232,121,249,.045) 50%,rgba(129,140,248,.055));backdrop-filter:blur(18px);position:relative;overflow:hidden;padding:52px 44px;margin-bottom:36px; }
+        .harem-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#f472b6 20%,#e879f9 55%,#818cf8 85%,transparent)}
+        .harem-deco{position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-size:220px;opacity:.022;pointer-events:none;line-height:1;user-select:none;font-family:'Unbounded',sans-serif}
+        .event-tag{display:inline-flex;align-items:center;gap:8px;font-family:'Unbounded',sans-serif;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--a4);border:1px solid rgba(244,114,182,.26);border-radius:999px;padding:5px 13px;margin-bottom:20px;background:rgba(244,114,182,.05)}
+        .event-dot{width:6px;height:6px;border-radius:50%;background:#f472b6;box-shadow:0 0 10px #f472b6;animation:lp 2s infinite}
+        .harem-title{font-family:'Unbounded',sans-serif;font-weight:900;font-size:clamp(28px,5.5vw,56px);line-height:1.02;letter-spacing:-.02em;margin-bottom:16px}
+        .harem-desc{font-size:15px;font-weight:300;color:var(--muted);line-height:1.7;max-width:56ch;margin-bottom:28px} .harem-desc strong{color:var(--a4);font-weight:600}
+        .harem-btns{display:flex;gap:10px;flex-wrap:wrap}
 
-        .harem-members-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 14px;
-        }
-        .harem-member-card {
-            border: 1px solid rgba(244,114,182,.2);
-            border-radius: 20px;
-            background: rgba(244,114,182,.04);
-            padding: 20px 16px;
-            display: flex; flex-direction: column; gap: 8px;
-            transition: .3s; cursor: pointer; position: relative; overflow: hidden;
-        }
-        .harem-member-card::before {
-            content:''; position:absolute;top:0;left:0;right:0;height:1px;
-            background: linear-gradient(90deg, transparent, rgba(244,114,182,.4), transparent);
-        }
-        .harem-member-card:hover { border-color: rgba(244,114,182,.5); background: rgba(244,114,182,.09); transform: translateY(-3px); box-shadow: 0 12px 36px rgba(244,114,182,.12); }
-        .hm-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #f472b6, #e879f9); display: flex; align-items: center; justify-content: center; font-size: 20px; font-family: 'Unbounded', sans-serif; font-weight: 900; color: #09071d; margin-bottom: 4px; }
-        .hm-name { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 13px; }
-        .hm-char { font-size: 12px; color: var(--a4); }
-        .hm-fandom { font-size: 11px; color: var(--muted); }
-        .hm-status { font-size: 10px; padding: 3px 10px; border-radius: 999px; background: rgba(244,114,182,.1); color: #f9a8d4; border: 1px solid rgba(244,114,182,.2); width: fit-content; margin-top: 2px; }
+        .harem-sec-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+        .harem-count-badge{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--a4);padding:5px 14px;border-radius:999px;background:rgba(244,114,182,.07);border:1px solid rgba(244,114,182,.2)}
+        .harem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+        .harem-card{border:1px solid rgba(244,114,182,.16);border-radius:22px;background:linear-gradient(140deg,rgba(244,114,182,.05),rgba(232,121,249,.025));padding:22px 18px;display:flex;flex-direction:column;gap:9px;transition:.3s cubic-bezier(.22,1,.36,1);cursor:pointer;position:relative;overflow:hidden}
+        .harem-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(244,114,182,.5),transparent)}
+        .harem-card:hover{border-color:rgba(244,114,182,.42);background:linear-gradient(140deg,rgba(244,114,182,.09),rgba(232,121,249,.055));transform:translateY(-4px);box-shadow:0 16px 42px rgba(244,114,182,.13)}
+        .hc-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#e879f9);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-weight:900;font-size:20px;color:#09071d;box-shadow:0 4px 18px rgba(244,114,182,.28);margin-bottom:2px}
+        .hc-name{font-family:'Unbounded',sans-serif;font-weight:700;font-size:13px} .hc-char{font-size:12px;color:var(--a4)} .hc-fandom{font-size:11px;color:var(--muted)}
+        .hc-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 10px;border-radius:999px;background:rgba(244,114,182,.09);color:#f9a8d4;border:1px solid rgba(244,114,182,.2);width:fit-content;margin-top:2px}
+        .harem-empty{text-align:center;padding:52px 24px;border:1px dashed rgba(244,114,182,.18);border-radius:20px;background:rgba(244,114,182,.025);grid-column:1/-1}
+        .he-icon{font-size:42px;margin-bottom:14px} .harem-empty p{font-size:14px;color:var(--muted);font-weight:300;line-height:1.65} .harem-empty strong{color:var(--a4);font-weight:600}
 
-        /* ============ MODAL OVERLAY ============ */
-        .modal-overlay {
-            position: fixed; inset: 0; z-index: 999;
-            background: rgba(5,4,14,.85);
-            backdrop-filter: blur(16px);
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-            opacity: 0; pointer-events: none; transition: opacity .3s;
-        }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal {
-            border: 1px solid var(--stroke);
-            border-radius: 28px;
-            background: rgba(12,10,28,.95);
-            max-width: 440px; width: 100%;
-            padding: 36px 32px;
-            position: relative;
-            box-shadow: 0 40px 100px rgba(0,0,0,.8);
-            transform: scale(.94) translateY(16px);
-            transition: transform .3s cubic-bezier(.22,1,.36,1);
-        }
-        .modal-overlay.active .modal { transform: scale(1) translateY(0); }
-        .modal::before {
-            content:''; position:absolute;top:0;left:0;right:0;height:1px;
-            background:linear-gradient(90deg,transparent,var(--a1) 25%,var(--a2) 55%,var(--a3) 80%,transparent);
-            border-radius: 28px 28px 0 0;
-        }
-        .modal-close {
-            position: absolute; top: 16px; right: 16px; width: 32px; height: 32px;
-            border-radius: 50%; border: 1px solid var(--stroke); background: rgba(255,255,255,.04);
-            color: var(--muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
-            transition: .2s;
-        }
-        .modal-close:hover { background: rgba(255,255,255,.1); color: var(--text); }
-        .modal-title { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 6px; }
-        .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-        .form-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-        .form-input {
-            padding: 12px 16px; border-radius: 12px;
-            border: 1px solid var(--stroke);
-            background: rgba(255,255,255,.04);
-            color: var(--text); font-family: 'Raleway', sans-serif; font-size: 14px;
-            outline: none; transition: border-color .2s;
-        }
-        .form-input:focus { border-color: var(--a1); background: rgba(232,121,249,.05); }
-        .form-input::placeholder { color: rgba(255,255,255,.2); }
-        .form-error { font-size: 12px; color: #fca5a5; margin-top: 4px; display: none; }
-        .form-error.show { display: block; }
-        .passwords-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
-        .passwords-table th { text-align: left; padding: 6px 10px; color: var(--muted); font-weight: 600; letter-spacing: .06em; border-bottom: 1px solid var(--stroke); }
-        .passwords-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.04); }
-        .pt-name { color: var(--text); font-weight: 600; }
-        .pt-pass { color: var(--a1); font-family: monospace; }
-        .pt-char { color: var(--muted); }
+        /* ===== MODAL ===== */
+        .modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(4,3,12,.9);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+        .modal-overlay.active{opacity:1;pointer-events:all}
+        .modal{border:1px solid var(--stroke);border-radius:28px;background:rgba(8,6,20,.98);max-width:460px;width:100%;padding:38px 34px;position:relative;box-shadow:0 50px 120px rgba(0,0,0,.9);transform:scale(.93) translateY(20px);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+        .modal-overlay.active .modal{transform:scale(1) translateY(0)}
+        .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--a1) 25%,var(--a2) 55%,var(--a3) 80%,transparent);border-radius:28px 28px 0 0}
+        .modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;border:1px solid var(--stroke);background:rgba(255,255,255,.03);color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.2s}
+        .modal-close:hover{background:rgba(255,255,255,.09);color:var(--text)}
+        .modal-title{font-family:'Unbounded',sans-serif;font-weight:700;font-size:21px;margin-bottom:6px} .modal-sub{font-size:13px;color:var(--muted);margin-bottom:26px;line-height:1.55}
+        .fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px} .flabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+        .finput{padding:12px 15px;border-radius:12px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);color:var(--text);font-family:'Raleway',sans-serif;font-size:14px;outline:none;transition:.2s}
+        .finput:focus{border-color:var(--a1);background:rgba(232,121,249,.04)} .finput::placeholder{color:rgba(255,255,255,.18)}
+        .ferr{font-size:12px;color:#fca5a5;margin-top:4px;display:none;animation:su .25s both} .ferr.show{display:block}
+        .divider{margin:20px 0;border:none;border-top:1px solid var(--stroke)}
+        .pt-head{font-size:10px;color:rgba(255,255,255,.3);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+        .pt{width:100%;border-collapse:collapse;font-size:12px} .pt th{text-align:left;padding:5px 8px;color:rgba(255,255,255,.28);font-weight:600;font-size:10px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--stroke)} .pt td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.03)}
+        .pt-n{color:var(--text);font-weight:600} .pt-p{color:var(--a1);font-family:monospace;font-size:11px} .pt-c{color:var(--muted)}
 
-        /* ============ PROFILE PAGE ============ */
-        #profile-page {
-            display: none; position: fixed; inset: 0; z-index: 200;
-            background: var(--bg); overflow-y: auto;
-        }
-        #profile-page.active { display: block; }
-        .profile-mesh {
-            position: fixed; inset: 0; pointer-events: none;
-            background:
-                radial-gradient(ellipse 700px 500px at 20% 20%, rgba(244,114,182,.15), transparent 55%),
-                radial-gradient(ellipse 600px 600px at 80% 80%, rgba(232,121,249,.12), transparent 55%);
-            animation: mp 14s ease-in-out infinite alternate;
-        }
-        .profile-wrap { position: relative; z-index: 10; max-width: 860px; margin: 0 auto; padding: 80px 28px 60px; }
-        .profile-back {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-size: 13px; color: var(--muted); cursor: pointer; margin-bottom: 32px;
-            transition: color .2s; border: none; background: none; font-family: 'Raleway', sans-serif;
-        }
-        .profile-back:hover { color: var(--text); }
-        .profile-header {
-            display: flex; align-items: flex-start; gap: 24px; margin-bottom: 36px;
-            flex-wrap: wrap;
-        }
-        .profile-avatar {
-            width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0;
-            background: linear-gradient(135deg, #f472b6, #e879f9);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 30px; color: #09071d;
-            box-shadow: 0 0 30px rgba(244,114,182,.3);
-        }
-        .profile-info { flex: 1; }
-        .profile-name { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 28px; margin-bottom: 4px; }
-        .profile-char { font-size: 14px; color: var(--a4); margin-bottom: 4px; }
-        .profile-fandom { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
-        .profile-badge {
-            display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px;
-            border-radius: 999px; background: rgba(244,114,182,.1); color: #f9a8d4;
-            border: 1px solid rgba(244,114,182,.25); font-size: 11px; font-family: 'Unbounded', sans-serif;
-            letter-spacing: .08em;
-        }
-        .post-area { margin-bottom: 32px; }
-        .post-area h3 { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
-        .post-input-wrap {
-            border: 1px solid var(--stroke); border-radius: 20px; background: rgba(255,255,255,.03);
-            padding: 18px; display: flex; flex-direction: column; gap: 12px;
-        }
-        .post-textarea {
-            background: transparent; border: none; outline: none; resize: none;
-            color: var(--text); font-family: 'Raleway', sans-serif; font-size: 14px; line-height: 1.6;
-            min-height: 80px; width: 100%;
-        }
-        .post-textarea::placeholder { color: rgba(255,255,255,.2); }
-        .post-actions { display: flex; justify-content: flex-end; gap: 10px; align-items: center; }
-        .post-char-count { font-size: 11px; color: var(--muted); }
-        .posts-feed { display: flex; flex-direction: column; gap: 14px; }
-        .post-card {
-            border: 1px solid var(--stroke); border-radius: 18px;
-            background: rgba(255,255,255,.025); padding: 18px 20px;
-            animation: su .4s both;
-        }
-        .post-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .post-card-avatar {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, #f472b6, #e879f9);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 13px; color: #09071d;
-        }
-        .post-card-meta { flex: 1; }
-        .post-card-name { font-weight: 600; font-size: 14px; }
-        .post-card-time { font-size: 11px; color: var(--muted); }
-        .post-card-body { font-size: 14px; font-weight: 300; line-height: 1.6; color: rgba(255,255,255,.85); white-space: pre-wrap; }
-        .post-delete { font-size: 11px; color: rgba(255,255,255,.2); cursor: pointer; transition: color .2s; background: none; border: none; font-family: 'Raleway', sans-serif; }
-        .post-delete:hover { color: #fca5a5; }
-        .empty-posts { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+        /* ===== PROFILE ===== */
+        #profile-page{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);overflow-y:auto}
+        #profile-page.active{display:block}
+        .pm{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 600px 500px at 15% 20%,rgba(244,114,182,.12),transparent 55%),radial-gradient(ellipse 600px 600px at 85% 75%,rgba(232,121,249,.09),transparent 55%);animation:mp 14s ease-in-out infinite alternate}
+        .pw{position:relative;z-index:10;max-width:820px;margin:0 auto;padding:72px 28px 80px}
+        .pback{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;margin-bottom:28px;transition:color .2s;border:none;background:none;font-family:'Raleway',sans-serif;padding:0}
+        .pback:hover{color:var(--text)}
+        .ph{border:1px solid rgba(244,114,182,.2);border-radius:24px;background:linear-gradient(135deg,rgba(244,114,182,.055),rgba(232,121,249,.035));padding:26px 28px;display:flex;align-items:flex-start;gap:22px;margin-bottom:26px;flex-wrap:wrap;position:relative;overflow:hidden}
+        .ph::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(244,114,182,.48),transparent)}
+        .pav{width:70px;height:70px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#f472b6,#e879f9);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-weight:900;font-size:26px;color:#09071d;box-shadow:0 0 30px rgba(244,114,182,.32)}
+        .pi{flex:1;min-width:0}
+        .pname{font-family:'Unbounded',sans-serif;font-weight:900;font-size:22px;margin-bottom:3px} .pchar{font-size:13px;color:var(--a4);margin-bottom:3px} .pfandom{font-size:12px;color:var(--muted);margin-bottom:12px}
+        .pbadges{display:flex;gap:7px;flex-wrap:wrap}
+        .pb{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:999px;font-size:11px;font-family:'Unbounded',sans-serif;letter-spacing:.06em}
+        .pb-m{background:rgba(129,140,248,.09);color:var(--a2);border:1px solid rgba(129,140,248,.2)} .pb-h{background:rgba(244,114,182,.09);color:#f9a8d4;border:1px solid rgba(244,114,182,.2)}
 
-        footer{position:relative;z-index:10;text-align:center;padding:28px;border-top:1px solid var(--stroke);font-size:12px;color:rgba(255,255,255,.3);letter-spacing:.04em}
+        .composer{border:1px solid var(--stroke);border-radius:20px;background:rgba(255,255,255,.022);padding:18px;display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+        .comp-label{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase}
+        .comp-ta{background:transparent;border:none;outline:none;resize:none;color:var(--text);font-family:'Raleway',sans-serif;font-size:14px;line-height:1.65;min-height:88px;width:100%} .comp-ta::placeholder{color:rgba(255,255,255,.18)}
+        .comp-foot{display:flex;justify-content:space-between;align-items:center}
+        .cc{font-size:11px;color:rgba(255,255,255,.22)} .cc.near{color:#fcd34d} .cc.full{color:#fca5a5}
 
-        @keyframes su{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes fd{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+        .feed-ttl{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+        .posts-feed{display:flex;flex-direction:column;gap:12px}
+        .post-card{border:1px solid var(--stroke);border-radius:18px;background:rgba(255,255,255,.02);padding:18px 20px;animation:su .4s both;transition:border-color .2s}
+        .post-card:hover{border-color:rgba(244,114,182,.16)}
+        .pch{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+        .pc-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#f472b6,#e879f9);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-weight:900;font-size:12px;color:#09071d}
+        .pc-m{flex:1;min-width:0} .pc-n{font-weight:700;font-size:13px} .pc-t{font-size:10px;color:var(--muted)}
+        .pc-del{font-size:11px;color:rgba(255,255,255,.18);cursor:pointer;transition:color .2s;background:none;border:none;font-family:'Raleway',sans-serif;padding:4px 8px;border-radius:6px}
+        .pc-del:hover{color:#fca5a5;background:rgba(248,113,113,.07)}
+        .pc-body{font-size:14px;font-weight:300;line-height:1.65;color:rgba(255,255,255,.82);white-space:pre-wrap;word-break:break-word}
+        .feed-empty{text-align:center;padding:36px;color:var(--muted);font-size:13px;border:1px dashed var(--stroke);border-radius:16px}
 
-        .reveal{opacity:0;transform:translateY(24px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+        footer{position:relative;z-index:10;text-align:center;padding:24px;border-top:1px solid var(--stroke);font-size:12px;color:rgba(255,255,255,.22);letter-spacing:.04em}
+        footer a{text-decoration:none;transition:color .2s} footer a:hover{color:var(--text)}
+
+        @keyframes su{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fd{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
         .reveal.visible{opacity:1;transform:translateY(0)}
 
-        @media(max-width:600px){
-            nav{padding:12px 16px} .nav-logo{font-size:14px}
-            section{padding:90px 16px 50px} .card-inner{padding:20px} .join-box{padding:40px 16px}
-            .harem-banner{padding:28px 20px} .harem-banner::after{display:none}
-            .modal{padding:28px 20px}
+        @media(max-width:680px){
+            nav{padding:10px 14px} .nav-logo{font-size:14px} .nav-links a,.nbtn{font-size:11px;padding:6px 10px}
+            section{padding:88px 14px 48px} .harem-banner{padding:28px 18px} .harem-deco{display:none}
+            .modal{padding:26px 18px} .pw{padding:64px 14px 60px} .ph{padding:20px 16px}
         }
     </style>
 </head>
 <body>
-
 <canvas id="cvs"></canvas>
 <div class="mesh"></div>
 <div class="noise"></div>
 
+<!-- NAV -->
 <nav>
-    <div class="nav-logo">LGEL ФЛУД</div>
+    <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">LGEL ФЛУД</div>
     <div class="nav-links">
         <a href="#info">Инфо</a>
         <a href="#harem">Гарем</a>
         <a href="#admin">Команда</a>
         <a href="#roles">Роли</a>
         <a href="#rules">Правила</a>
-        <span class="nav-login-btn" onclick="openLogin()">🔑 Войти</span>
+        <span id="navAuth"></span>
         <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" class="nav-join">Вступить ✦</a>
     </div>
 </nav>
 
 <!-- LOGIN MODAL -->
-<div class="modal-overlay" id="loginModal">
+<div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeLogin()">
     <div class="modal">
         <button class="modal-close" onclick="closeLogin()">✕</button>
         <div class="modal-title">🔑 Вход</div>
-        <div class="modal-sub">Войди под своим именем участника, чтобы открыть личную страницу.</div>
-        <div class="form-group">
-            <div class="form-label">Имя участника</div>
-            <input class="form-input" id="loginName" placeholder="Например: yunochhka" autocomplete="off" />
+        <div class="modal-sub">Введи своё имя и личный пароль для доступа к профилю.</div>
+        <div class="fg">
+            <div class="flabel">Имя участника</div>
+            <input class="finput" id="lName" placeholder="Например: Madopk" autocomplete="off" />
         </div>
-        <div class="form-group">
-            <div class="form-label">Пароль</div>
-            <input class="form-input" id="loginPass" type="password" placeholder="Твой личный пароль" />
+        <div class="fg">
+            <div class="flabel">Пароль</div>
+            <input class="finput" id="lPass" type="password" placeholder="Твой личный пароль" />
         </div>
-        <div class="form-error" id="loginError">Неверное имя или пароль. Попробуй ещё раз.</div>
-        <button class="btn btn-pri" style="width:100%;justify-content:center;margin-top:8px" onclick="doLogin()">Войти →</button>
-        <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--stroke)">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:.05em">СПИСОК ПАРОЛЕЙ (только для участников флуда)</div>
-            <table class="passwords-table">
-                <thead><tr><th>Участник</th><th>Пароль</th><th>Персонаж</th></tr></thead>
-                <tbody id="passTable"></tbody>
-            </table>
-        </div>
+        <div class="ferr" id="lErr">Неверное имя или пароль.</div>
+        <button class="btn btn-pri" style="width:100%;justify-content:center;margin-top:10px" onclick="doLogin()">Войти →</button>
+        <hr class="divider">
+        <div class="pt-head">Пароли участников флуда</div>
+        <table class="pt"><thead><tr><th>Участник</th><th>Пароль</th><th>Персонаж</th></tr></thead><tbody id="ptBody"></tbody></table>
     </div>
 </div>
 
 <!-- PROFILE PAGE -->
 <div id="profile-page">
-    <div class="profile-mesh"></div>
-    <div class="profile-wrap">
-        <button class="profile-back" onclick="closeProfile()">← Вернуться на сайт</button>
-        <div class="profile-header">
-            <div class="profile-avatar" id="profileAvatar"></div>
-            <div class="profile-info">
-                <div class="profile-name" id="profileName"></div>
-                <div class="profile-char" id="profileChar"></div>
-                <div class="profile-fandom" id="profileFandom"></div>
-                <div class="profile-badge">♡ &nbsp;Гарем Юно</div>
-            </div>
-        </div>
-
-        <div class="post-area">
-            <h3>✏️ Новый пост</h3>
-            <div class="post-input-wrap">
-                <textarea class="post-textarea" id="postText" placeholder="Напиши что-нибудь... поделись мыслями, цитатой или просто настроением 💜" maxlength="500" oninput="updateCount()"></textarea>
-                <div class="post-actions">
-                    <span class="post-char-count"><span id="charCount">0</span>/500</span>
-                    <button class="btn btn-pink" style="padding:10px 22px;font-size:13px" onclick="addPost()">Опубликовать ✦</button>
+    <div class="pm"></div>
+    <div class="pw">
+        <button class="pback" onclick="closeProfile()">← Назад</button>
+        <div class="ph">
+            <div class="pav" id="pAv"></div>
+            <div class="pi">
+                <div class="pname" id="pNm"></div>
+                <div class="pchar" id="pCh"></div>
+                <div class="pfandom" id="pFd"></div>
+                <div class="pbadges">
+                    <span class="pb pb-m">✦ Участник флуда</span>
+                    <span class="pb pb-h" id="pHb" style="display:none">♡ Гарем Юно</span>
                 </div>
             </div>
         </div>
-
-        <div>
-            <h3 style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;margin-bottom:14px">📖 Мои посты</h3>
-            <div class="posts-feed" id="postsFeed">
-                <div class="empty-posts">Здесь пока пусто. Напиши свой первый пост! 🌸</div>
+        <div class="composer" id="comp">
+            <div class="comp-label">Новый пост</div>
+            <textarea class="comp-ta" id="compTa" maxlength="500" placeholder="Поделись мыслью или настроением... 💜" oninput="updCC()"></textarea>
+            <div class="comp-foot">
+                <span class="cc" id="ccEl">0 / 500</span>
+                <button class="btn btn-pink btn-sm" onclick="submitPost()">Опубликовать ✦</button>
             </div>
         </div>
+        <div class="feed-ttl" id="feedTtl">Посты</div>
+        <div class="posts-feed" id="feed"></div>
     </div>
 </div>
 
 <main>
-
     <!-- HERO -->
     <section class="hero-section" id="home">
         <div class="hero-eyebrow">Добро пожаловать в</div>
-        <div class="hero-title">
-            <div class="g">LGEL</div>
-            <div class="outline">ФЛУД</div>
-        </div>
-        <p class="hero-sub">Флуд по всем фандомам — аниме, сериалы, игры и не только. <em>Найди своего персонажа</em> и стань частью нашего сообщества.</p>
+        <div class="hero-title"><div class="g">LGEL</div><div class="outline">ФЛУД</div></div>
+        <p class="hero-sub">Флуд по всем фандомам — аниме, сериалы, игры и не только. <em>Найди своего персонажа</em> и стань частью нашего мира.</p>
         <div class="live-pill"><span class="live-dot"></span>TikTok: <strong>lgell_fl</strong></div>
         <div class="hero-btns">
-            <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" class="btn btn-pri">✦ Вступить в флуд</a>
+            <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" class="btn btn-pri">✦ Войти во флуд</a>
             <a href="#harem" class="btn btn-pink">♡ Гарем Юно</a>
-            <a href="#roles" class="btn btn-sec">Посмотреть роли</a>
+            <a href="#roles" class="btn btn-sec">Роли</a>
         </div>
     </section>
 
     <!-- INFO -->
     <section id="info">
         <div class="reveal">
-            <div class="sec-label">Информация</div>
-            <h2 class="sec-title">О нашем <span>флуде</span></h2>
-            <p class="sec-sub">Здесь вы найдёте всю информацию из жизни нашего флуда. Изучите правила и занятые роли перед тем, как зайти.</p>
+            <div class="sec-label">О флуде</div>
+            <h2 class="sec-title">Вся <span>информация</span></h2>
+            <p class="sec-sub">Изучи правила и занятые роли до вступления.</p>
         </div>
         <div class="info-grid reveal">
-            <div class="info-card">
-                <div class="info-icon">💬</div>
-                <h3>Норма сообщений</h3>
-                <p>Норма: <strong>150 сообщений</strong> в неделю. Чистка каждое <strong>воскресенье</strong>. Набирать во время чистки = автокик.</p>
-            </div>
-            <div class="info-card">
-                <div class="info-icon">🌙</div>
-                <h3>Рест</h3>
-                <p>Хочешь отдохнуть — напиши владельцу. Обговорите время, дату и срок, и отдыхай со спокойной душой.</p>
-            </div>
-            <div class="info-card">
-                <div class="info-icon">🎬</div>
-                <h3>Монтаж</h3>
-                <p>Абсолютно <strong>любой участник</strong> может стать монтажёром. TikTok: <strong>lgell_fl</strong></p>
-            </div>
-            <div class="info-card">
-                <div class="info-icon">✨</div>
-                <h3>Фандомы</h3>
-                <p>Death Note, Naruto, Какегурui, Магическая Битва, Блич, FF7 и <strong>десятки других миров</strong>.</p>
-            </div>
+            <div class="info-card"><div class="info-icon">💬</div><h3>Норма сообщений</h3><p>Норма: <strong>150 сообщений</strong> в неделю. Чистка каждое <strong>воскресенье</strong>. Набирать во время чистки = автокик.</p></div>
+            <div class="info-card"><div class="info-icon">🌙</div><h3>Рест</h3><p>Хочешь уйти на рест — напиши владельцу. Обговорите дату и срок. Отдыхай спокойно.</p></div>
+            <div class="info-card"><div class="info-icon">🎬</div><h3>Монтаж</h3><p>Любой участник может стать монтажёром. TikTok: <strong>lgell_fl</strong></p></div>
+            <div class="info-card"><div class="info-icon">✨</div><h3>Фандомы</h3><p>Death Note, Naruto, Kakegurui, Магическая Битва, Блич, FF7 и <strong>многие другие</strong>.</p></div>
         </div>
     </section>
 
-    <!-- HAREM EVENT -->
+    <!-- HAREM -->
     <section id="harem">
         <div class="reveal">
             <div class="harem-banner">
-                <div class="harem-tag"><span class="harem-tag-dot"></span>Активное событие</div>
-                <div class="harem-title">
-                    Набор <span class="pink">Гарема</span><br>к Юно ♡
-                </div>
-                <p class="harem-desc">
-                    Юно Гасай открывает свой гарем — и ты можешь стать его частью.<br>
-                    Присоединяйся к флуду, займи роль и попади в список избранных.<br>
-                    <strong>Переходи в чат и напиши @yunochhka</strong> — Юно сама решит, достоин ли ты.
-                </p>
+                <div class="harem-deco">♡</div>
+                <div class="event-tag"><span class="event-dot"></span>Активный набор</div>
+                <div class="harem-title">Набор <span class="pk">Гарема</span><br>к Юно Гасай ♡</div>
+                <p class="harem-desc">Юно Гасай открывает свой гарем — и ты можешь стать его частью.<br>Вступи во флуд, займи роль и напиши <strong>@yunochhka</strong>.<br>Только Юно решает, кого принять.</p>
                 <div class="harem-btns">
-                    <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" class="btn btn-pink">♡ Вступить в гарем</a>
+                    <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" class="btn btn-pink">♡ Вступить во флуд</a>
                     <a href="https://t.me/yunochhka" target="_blank" class="btn btn-sec">Написать @yunochhka</a>
                 </div>
             </div>
         </div>
-
         <div class="reveal">
-            <div class="sec-label" style="color:var(--a4)">Участники гарема</div>
-            <h2 class="sec-title">Кто уже <span>в гареме</span></h2>
-            <p class="sec-sub">Участники, принятые Юно в гарем. Нажми на карточку — перейдёшь на профиль (нужен вход).</p>
+            <div class="harem-sec-head">
+                <div>
+                    <div class="sec-label" style="color:var(--a4)">Участники гарема</div>
+                    <h2 class="sec-title" style="margin-bottom:0">Кто уже <span class="pk">избран</span></h2>
+                </div>
+                <div class="harem-count-badge" id="hCount"></div>
+            </div>
+            <p class="sec-sub">Нажми на карточку, чтобы открыть профиль. Нужен вход.</p>
+            <div class="harem-grid" id="hGrid"></div>
         </div>
-        <div class="harem-members-grid reveal" id="haremGrid"></div>
     </section>
 
     <!-- ADMIN -->
@@ -580,45 +324,15 @@
         <div class="reveal">
             <div class="sec-label">Команда</div>
             <h2 class="sec-title"><span>Администрация</span></h2>
-            <p class="sec-sub">Наша команда следит за жизнью флуда, атмосферой и поиском новых участников.</p>
+            <p class="sec-sub">Следят за жизнью флуда и атмосферой.</p>
         </div>
         <div class="admin-grid reveal">
-            <div class="admin-card">
-                <div class="admin-role role-owner">OWNER</div>
-                <div class="admin-name">famuliaf</div>
-                <a href="https://t.me/famuliaf" target="_blank" class="admin-handle">@famuliaf</a>
-                <div class="admin-desc">Владелец флуда. TikTok аккаунт, инфо канал, жизнь флуда.</div>
-            </div>
-            <div class="admin-card">
-                <div class="admin-role role-deputy">DEPUTY OWNER</div>
-                <div class="admin-name">yunochhka</div>
-                <a href="https://t.me/yunochhka" target="_blank" class="admin-handle">@yunochhka</a>
-                <div class="admin-desc">Полноценный заместитель владельца. Хозяйка гарема ♡</div>
-            </div>
-            <div class="admin-card">
-                <div class="admin-role role-senior">SENIOR ADMIN</div>
-                <div class="admin-name">MasRn0</div>
-                <a href="https://t.me/MasRn0" target="_blank" class="admin-handle">@MasRn0</a>
-                <div class="admin-desc">Следит за чатом, расширенные привилегии.</div>
-            </div>
-            <div class="admin-card">
-                <div class="admin-role role-senior">SENIOR ADMIN</div>
-                <div class="admin-name">angelcareyou</div>
-                <a href="https://t.me/angelcareyou" target="_blank" class="admin-handle">@angelcareyou</a>
-                <div class="admin-desc">Следит за чатом, расширенные привилегии.</div>
-            </div>
-            <div class="admin-card">
-                <div class="admin-role role-junior">JUNIOR ADMIN</div>
-                <div class="admin-name">AshSniper7</div>
-                <a href="https://t.me/AshSniper7" target="_blank" class="admin-handle">@AshSniper7</a>
-                <div class="admin-desc">Чат, поиск новых участников.</div>
-            </div>
-            <div class="admin-card">
-                <div class="admin-role role-junior">JUNIOR ADMIN</div>
-                <div class="admin-name">ShiloInPopA</div>
-                <a href="https://t.me/ShiloInPopA" target="_blank" class="admin-handle">@ShiloInPopA</a>
-                <div class="admin-desc">Чат, поиск новых участников.</div>
-            </div>
+            <div class="admin-card"><div class="admin-role role-owner">OWNER</div><div class="admin-name">famuliaf</div><a href="https://t.me/famuliaf" target="_blank" class="admin-handle">@famuliaf</a><div class="admin-desc">Владелец флуда. TikTok, инфо канал, жизнь флуда.</div></div>
+            <div class="admin-card"><div class="admin-role role-deputy">DEPUTY OWNER</div><div class="admin-name">yunochhka</div><a href="https://t.me/yunochhka" target="_blank" class="admin-handle">@yunochhka</a><div class="admin-desc">Заместитель владельца. Хозяйка гарема ♡</div></div>
+            <div class="admin-card"><div class="admin-role role-senior">SENIOR ADMIN</div><div class="admin-name">MasRn0</div><a href="https://t.me/MasRn0" target="_blank" class="admin-handle">@MasRn0</a><div class="admin-desc">Следит за чатом, расширенные привилегии.</div></div>
+            <div class="admin-card"><div class="admin-role role-senior">SENIOR ADMIN</div><div class="admin-name">angelcareyou</div><a href="https://t.me/angelcareyou" target="_blank" class="admin-handle">@angelcareyou</a><div class="admin-desc">Следит за чатом, расширенные привилегии.</div></div>
+            <div class="admin-card"><div class="admin-role role-junior">JUNIOR ADMIN</div><div class="admin-name">AshSniper7</div><a href="https://t.me/AshSniper7" target="_blank" class="admin-handle">@AshSniper7</a><div class="admin-desc">Чат, поиск новых участников.</div></div>
+            <div class="admin-card"><div class="admin-role role-junior">JUNIOR ADMIN</div><div class="admin-name">ShiloInPopA</div><a href="https://t.me/ShiloInPopA" target="_blank" class="admin-handle">@ShiloInPopA</a><div class="admin-desc">Чат, поиск новых участников.</div></div>
         </div>
     </section>
 
@@ -627,137 +341,22 @@
         <div class="reveal">
             <div class="sec-label">Роли</div>
             <h2 class="sec-title">Список <span>занятых ролей</span></h2>
-            <p class="sec-sub">Нажми на фандом, чтобы развернуть. Хочешь роль? Пиши <a href="https://t.me/famuliaf" target="_blank" style="color:var(--a1);text-decoration:none">@famuliaf</a></p>
+            <p class="sec-sub">Нажми на фандом, чтобы развернуть. Хочешь роль? <a href="https://t.me/famuliaf" target="_blank" style="color:var(--a1);text-decoration:none">@famuliaf</a></p>
         </div>
         <div class="fandom-list reveal">
-
-            <div class="fandom-block open">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">☠️ &nbsp;DEATH NOTE</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Л Лоулайт</span><a href="https://t.me/famuliaf" class="role-user" target="_blank">@famuliaf</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Мэтт</span><a href="https://t.me/AshSniper7" class="role-user" target="_blank">@AshSniper7</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">🃏 &nbsp;KAKEGURUI</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Юмеко Ябами</span><a href="https://t.me/angelcareyou" class="role-user" target="_blank">@angelcareyou</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">📓 &nbsp;ДНЕВНИК БУДУЩЕГО</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Юно Гасай</span><a href="https://t.me/yunochhka" class="role-user" target="_blank">@yunochhka</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">♟️ &nbsp;КОД ГИАС</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Лелуш</span><a href="https://t.me/MasRn0" class="role-user" target="_blank">@MasRn0</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Сузаку</span><a href="https://t.me/amsterdamoww" class="role-user" target="_blank">@amsterdamoww</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">🍃 &nbsp;NARUTO</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Итачи</span><a href="https://t.me/xuewls" class="role-user" target="_blank">@xuewls</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">🩸 &nbsp;VAMPIRE KNIGHT</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Юки Кросс</span><span style="flex:1"></span><span class="role-reserved">Бронь</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">⚡ &nbsp;БЕЗДОМНЫЙ БОГ</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Ято</span><a href="https://t.me/Anisaoit" class="role-user" target="_blank">@Anisaoit</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">🔮 &nbsp;МАГИЧЕСКАЯ БИТВА</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Юки Цукумо</span><a href="https://t.me/zuki_zukilop" class="role-user" target="_blank">@zuki_zukilop</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">⚔️ &nbsp;БЛИЧ</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Менина</span><a href="https://t.me/mikoi3" class="role-user" target="_blank">@mikoi3</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">🔱 &nbsp;DEVIL MAY CRY</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Леди</span><a href="https://t.me/cherrygirl46" class="role-user" target="_blank">@cherrygirl46</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Данте</span><a href="https://t.me/ShiloInPopA" class="role-user" target="_blank">@ShiloInPopA</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">🌌 &nbsp;FINAL FANTASY 7</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Клауд</span><a href="https://t.me/tiffharam" class="role-user" target="_blank">@tiffharam</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">☀️ &nbsp;500 ДНЕЙ ЛЕТА</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Том</span><a href="https://t.me/Madopk" class="role-user" target="_blank">@Madopk</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
-            <div class="fandom-block">
-                <div class="fandom-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="fandom-name">🌸 &nbsp;ДРУГИЕ ФАНДОМЫ</div><span class="fandom-count">8</span><span class="fandom-arrow">▼</span>
-                </div>
-                <div class="fandom-roles">
-                    <div class="role-row"><span class="role-char">Лиса Роу (Прерванная жизнь)</span><a href="https://t.me/yunochhka" class="role-user" target="_blank">@yunochhka</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Сайя (Песнь Сайи)</span><a href="https://t.me/ht807" class="role-user" target="_blank">@ht807</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Юри (GLT)</span><a href="https://t.me/MaMalaras_111" class="role-user" target="_blank">@MaMalaras_111</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Юри (Клуб Яричин)</span><a href="https://t.me/all_is333" class="role-user" target="_blank">@all_is333</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Оля (Тинни Банни)</span><a href="https://t.me/UYOVINX" class="role-user" target="_blank">@UYOVINX</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Иан (Бесстыжие)</span><span style="flex:1"></span><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Айко Танака (Пунпун)</span><a href="https://t.me/p0zyrattel" class="role-user" target="_blank">@p0zyrattel</a><span class="role-taken">Занята</span></div>
-                    <div class="role-row"><span class="role-char">Мелстрой</span><a href="https://t.me/morganchloveu" class="role-user" target="_blank">@morganchloveu</a><span class="role-taken">Занята</span></div>
-                </div>
-            </div>
-
+            <div class="fandom-block open"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">☠️ &nbsp;DEATH NOTE</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Л Лоулайт</span><a href="https://t.me/famuliaf" class="role-user" target="_blank">@famuliaf</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Мэтт</span><a href="https://t.me/AshSniper7" class="role-user" target="_blank">@AshSniper7</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">🃏 &nbsp;KAKEGURUI</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Юмеко Ябами</span><a href="https://t.me/angelcareyou" class="role-user" target="_blank">@angelcareyou</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">📓 &nbsp;ДНЕВНИК БУДУЩЕГО</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Юно Гасай</span><a href="https://t.me/yunochhka" class="role-user" target="_blank">@yunochhka</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">♟️ &nbsp;КОД ГИАС</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Лелуш</span><a href="https://t.me/MasRn0" class="role-user" target="_blank">@MasRn0</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Сузаку</span><a href="https://t.me/amsterdamoww" class="role-user" target="_blank">@amsterdamoww</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">🍃 &nbsp;NARUTO</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Итачи</span><a href="https://t.me/xuewls" class="role-user" target="_blank">@xuewls</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">🩸 &nbsp;VAMPIRE KNIGHT</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Юки Кросс</span><span style="flex:1"></span><span class="role-reserved">Бронь</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">⚡ &nbsp;БЕЗДОМНЫЙ БОГ</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Ято</span><a href="https://t.me/Anisaoit" class="role-user" target="_blank">@Anisaoit</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">🔮 &nbsp;МАГИЧЕСКАЯ БИТВА</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Юки Цукумо</span><a href="https://t.me/zuki_zukilop" class="role-user" target="_blank">@zuki_zukilop</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">⚔️ &nbsp;БЛИЧ</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Менина</span><a href="https://t.me/mikoi3" class="role-user" target="_blank">@mikoi3</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">🔱 &nbsp;DEVIL MAY CRY</div><span class="fandom-count">2</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Леди</span><a href="https://t.me/cherrygirl46" class="role-user" target="_blank">@cherrygirl46</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Данте</span><a href="https://t.me/ShiloInPopA" class="role-user" target="_blank">@ShiloInPopA</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">🌌 &nbsp;FINAL FANTASY 7</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Клауд</span><a href="https://t.me/tiffharam" class="role-user" target="_blank">@tiffharam</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">☀️ &nbsp;500 ДНЕЙ ЛЕТА</div><span class="fandom-count">1</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Том</span><a href="https://t.me/Madopk" class="role-user" target="_blank">@Madopk</a><span class="role-taken">Занята</span></div></div></div>
+            <div class="fandom-block"><div class="fandom-header" onclick="this.parentElement.classList.toggle('open')"><div class="fandom-name">🌸 &nbsp;ДРУГИЕ ФАНДОМЫ</div><span class="fandom-count">8</span><span class="fandom-arrow">▼</span></div><div class="fandom-roles"><div class="role-row"><span class="role-char">Лиса Роу (Прерванная жизнь)</span><a href="https://t.me/yunochhka" class="role-user" target="_blank">@yunochhka</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Сайя (Песнь Сайи)</span><a href="https://t.me/ht807" class="role-user" target="_blank">@ht807</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Юри (GLT)</span><a href="https://t.me/MaMalaras_111" class="role-user" target="_blank">@MaMalaras_111</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Юри (Клуб Яричин)</span><a href="https://t.me/all_is333" class="role-user" target="_blank">@all_is333</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Оля (Тинни Банни)</span><a href="https://t.me/UYOVINX" class="role-user" target="_blank">@UYOVINX</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Иан (Бесстыжие)</span><span style="flex:1"></span><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Айко Танака (Пунпун)</span><a href="https://t.me/p0zyrattel" class="role-user" target="_blank">@p0zyrattel</a><span class="role-taken">Занята</span></div><div class="role-row"><span class="role-char">Мелстрой</span><a href="https://t.me/morganchloveu" class="role-user" target="_blank">@morganchloveu</a><span class="role-taken">Занята</span></div></div></div>
         </div>
     </section>
 
@@ -766,278 +365,226 @@
         <div class="reveal">
             <div class="sec-label">Правила</div>
             <h2 class="sec-title">Правила <span>флуда</span></h2>
-            <p class="sec-sub">Прочитай перед вступлением — обязательно к соблюдению.</p>
+            <p class="sec-sub">Обязательно к прочтению перед вступлением.</p>
         </div>
         <div class="reveal">
             <div class="tabs">
-                <button class="tab active" onclick="switchTab(this,'t-main')">Основные</button>
-                <button class="tab" onclick="switchTab(this,'t-flood')">Норма</button>
-                <button class="tab" onclick="switchTab(this,'t-rest')">Рест</button>
-                <button class="tab" onclick="switchTab(this,'t-harem')">Гарем</button>
+                <button class="tab active" onclick="stab(this,'tm')">Основные</button>
+                <button class="tab" onclick="stab(this,'tf')">Норма</button>
+                <button class="tab" onclick="stab(this,'tr')">Рест</button>
+                <button class="tab" onclick="stab(this,'th')">Гарем</button>
             </div>
-            <div class="tab-content active" id="t-main">
-                <div class="rule-list">
-                    <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Перед вступлением прочитай правила и изучи занятые роли.</div></div>
-                    <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Уважай всех участников. Токсичность и оскорбления — запрещены.</div></div>
-                    <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Все вопросы — к <strong>владельцу @famuliaf</strong></div></div>
-                    <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Соблюдай активность. Без уведомления = кик.</div></div>
-                    <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Любой может стать монтажёром: <strong>lgell_fl</strong></div></div>
-                </div>
-            </div>
-            <div class="tab-content" id="t-flood">
-                <div class="rule-list">
-                    <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Норма: <strong>150 сообщений</strong> в неделю.</div></div>
-                    <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Чистка каждое <strong>воскресенье</strong>.</div></div>
-                    <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Набирать сообщения во время чистки — <strong>запрещено</strong>. Автокик.</div></div>
-                    <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Не успеваешь — предупреди администрацию заранее.</div></div>
-                </div>
-            </div>
-            <div class="tab-content" id="t-rest">
-                <div class="rule-list">
-                    <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Хочешь рест — обязательно напиши <strong>владельцу флуда</strong>.</div></div>
-                    <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Обговорите время, дату и срок реста вместе.</div></div>
-                    <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">После согласования — отдыхай спокойно, кика не будет.</div></div>
-                    <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Несогласованный рест без предупреждения может привести к кику.</div></div>
-                </div>
-            </div>
-            <div class="tab-content" id="t-harem">
-                <div class="rule-list">
-                    <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Гарем формируется <strong>@yunochhka</strong> — только она решает, кого принять.</div></div>
-                    <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Чтобы вступить — <strong>сначала войди во флуд</strong>, затем напиши Юно.</div></div>
-                    <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">В гареме действуют все общие правила флуда.</div></div>
-                    <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Участники гарема получают <strong>личную страницу</strong> на сайте для публикаций.</div></div>
-                    <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Каждый участник гарема получает личный пароль для входа на сайт.</div></div>
-                </div>
-            </div>
+            <div class="tab-content active" id="tm"><div class="rule-list"><div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Прочитай правила и изучи занятые роли до вступления.</div></div><div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Уважай всех участников. Токсичность и оскорбления — запрещены.</div></div><div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Все вопросы — к <strong>@famuliaf</strong></div></div><div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Соблюдай активность. Без уведомления = кик.</div></div><div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Любой участник может стать монтажёром: <strong>lgell_fl</strong></div></div></div></div>
+            <div class="tab-content" id="tf"><div class="rule-list"><div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Норма: <strong>150 сообщений</strong> в неделю.</div></div><div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Чистка каждое <strong>воскресенье</strong>.</div></div><div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Набирать сообщения во время чистки — <strong>автокик</strong>.</div></div><div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Не успеваешь — предупреди администрацию заранее.</div></div></div></div>
+            <div class="tab-content" id="tr"><div class="rule-list"><div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Хочешь рест — напиши <strong>владельцу флуда</strong>.</div></div><div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Обговорите время, дату и срок вместе.</div></div><div class="rule-item"><div class="rule-num">03</div><div class="rule-text">После согласования — отдыхай, кика не будет.</div></div><div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Несогласованный рест может привести к кику.</div></div></div></div>
+            <div class="tab-content" id="th"><div class="rule-list"><div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Гарем формируется <strong>@yunochhka</strong> — только она решает, кого принять.</div></div><div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Сначала вступи во флуд, затем напиши Юно.</div></div><div class="rule-item"><div class="rule-num">03</div><div class="rule-text">В гареме действуют все правила флуда.</div></div><div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Каждый участник гарема получает <strong>личную страницу</strong> на сайте.</div></div><div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Пароль выдаётся лично — не передавай его другим.</div></div></div></div>
         </div>
     </section>
 
     <!-- JOIN -->
-    <section id="join" style="padding-bottom:80px">
+    <section id="join" style="padding-bottom:90px">
         <div class="card reveal">
             <div class="card-inner join-box">
                 <div class="join-emoji">♡</div>
-                <h2 class="sec-title" style="margin:0">Хочешь <span>вступить?</span></h2>
-                <p class="sec-sub" style="margin:0;text-align:center">Переходи в наш Telegram-флуд и напиши владельцу — обсудим роль и все детали.</p>
-                <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" class="btn btn-pri" style="font-size:15px;padding:15px 36px">Перейти во флуд ✦</a>
-                <a href="https://t.me/famuliaf" target="_blank" class="btn btn-sec">Написать @famuliaf</a>
+                <h2 class="sec-title" style="margin:0">Хочешь <span>к нам?</span></h2>
+                <p class="sec-sub" style="margin:0;text-align:center">Переходи в чат и напиши владельцу — обсудим роль и все детали.</p>
+                <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" class="btn btn-pri" style="font-size:15px;padding:15px 34px">Перейти во флуд ✦</a>
+                <a href="https://t.me/famuliaf" target="_blank" class="btn btn-sec btn-sm">Написать @famuliaf</a>
                 <div style="font-size:12px;color:var(--muted)">TikTok: <strong style="color:var(--a1)">lgell_fl</strong></div>
             </div>
         </div>
     </section>
-
 </main>
 
 <footer>
-    LGEL ФЛУД &nbsp;·&nbsp; <a href="https://t.me/famuliaf" target="_blank" style="color:var(--a1);text-decoration:none">@famuliaf</a> &nbsp;·&nbsp; <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" style="color:var(--a4);text-decoration:none">Флуд ♡</a>
+    LGEL ФЛУД &nbsp;·&nbsp;
+    <a href="https://t.me/famuliaf" target="_blank" style="color:var(--a1)">@famuliaf</a>
+    &nbsp;·&nbsp;
+    <a href="https://t.me/+bg5iT_RAwv4wMjBi" target="_blank" style="color:var(--a4)">Флуд ♡</a>
 </footer>
 
 <script>
-// ============ DATA ============
 const USERS = [
-    { name: 'yunochhka',     password: 'yuno♡0207',    char: 'Юно Гасай',         fandom: '📓 Дневник Будущего',   harem: true  },
-    { name: 'famuliaf',      password: 'lgelowner#1',  char: 'Л Лоулайт',         fandom: '☠️ Death Note',         harem: false },
-    { name: 'MasRn0',        password: 'lelouch♟21',   char: 'Лелуш',             fandom: '♟️ Код Гиас',           harem: true  },
-    { name: 'angelcareyou',  password: 'yumeko$kakeg', char: 'Юмеко Ябами',       fandom: '🃏 Kakegurui',          harem: true  },
-    { name: 'AshSniper7',    password: 'matt_DN777',   char: 'Мэтт',              fandom: '☠️ Death Note',         harem: true  },
-    { name: 'ShiloInPopA',   password: 'dante_dmc!',   char: 'Данте',             fandom: '🔱 Devil May Cry',      harem: true  },
-    { name: 'xuewls',        password: 'itachi_leaf',  char: 'Итачи',             fandom: '🍃 Naruto',             harem: true  },
-    { name: 'amsterdamoww',  password: 'suzaku_kr0',   char: 'Сузаку',            fandom: '♟️ Код Гиас',           harem: true  },
-    { name: 'Anisaoit',      password: 'yato_norag',   char: 'Ято',               fandom: '⚡ Бездомный Бог',      harem: true  },
-    { name: 'zuki_zukilop',  password: 'tsukumo_jjk',  char: 'Юки Цукумо',        fandom: '🔮 Магическая Битва',   harem: true  },
-    { name: 'mikoi3',        password: 'menina_bl!',   char: 'Менина',            fandom: '⚔️ Блич',               harem: true  },
-    { name: 'cherrygirl46',  password: 'lady_dmc22',   char: 'Леди',              fandom: '🔱 Devil May Cry',      harem: true  },
-    { name: 'tiffharam',     password: 'cloud_ff7!',   char: 'Клауд',             fandom: '🌌 Final Fantasy 7',    harem: true  },
-    { name: 'Madopk',        password: '500days_tom',  char: 'Том',               fandom: '☀️ 500 Дней Лета',      harem: true  },
-    { name: 'ht807',         password: 'saya_song!',   char: 'Сайя',              fandom: '🌸 Песнь Сайи',         harem: true  },
-    { name: 'MaMalaras_111', password: 'yuri_glt33',   char: 'Юри (GLT)',         fandom: '🌸 GLT',                harem: true  },
-    { name: 'all_is333',     password: 'yuri_yar!',    char: 'Юри (Клуб Яричин)', fandom: '🌸 Клуб Яричин',       harem: true  },
-    { name: 'UYOVINX',       password: 'olya_bunny',   char: 'Оля',               fandom: '🌸 Тинни Банни',        harem: true  },
-    { name: 'p0zyrattel',    password: 'aiko_pnpn',    char: 'Айко Танака',       fandom: '🌸 Пунпун',             harem: true  },
-    { name: 'morganchloveu', password: 'melstroy_x',   char: 'Мелстрой',          fandom: '🌸 Другие',             harem: true  },
+    { name:'famuliaf',      pass:'lgelowner#1',  char:'Л Лоулайт',         fandom:'☠️ Death Note',       harem:false },
+    { name:'yunochhka',     pass:'yuno0207',     char:'Юно Гасай',         fandom:'📓 Дневник Будущего', harem:false },
+    // Гарем: пока только Madopk
+    { name:'Madopk',        pass:'500days_tom',  char:'Том',               fandom:'☀️ 500 Дней Лета',    harem:true  },
+    { name:'MasRn0',        pass:'lelouch2121',  char:'Лелуш',             fandom:'♟️ Код Гиас',         harem:false },
+    { name:'angelcareyou',  pass:'yumeko2024',   char:'Юмеко Ябами',       fandom:'🃏 Kakegurui',        harem:false },
+    { name:'AshSniper7',    pass:'matt777DN',    char:'Мэтт',              fandom:'☠️ Death Note',       harem:false },
+    { name:'ShiloInPopA',   pass:'dante2024',    char:'Данте',             fandom:'🔱 Devil May Cry',    harem:false },
+    { name:'xuewls',        pass:'itachileaf1',  char:'Итачи',             fandom:'🍃 Naruto',           harem:false },
+    { name:'amsterdamoww',  pass:'suzakukr00',   char:'Сузаку',            fandom:'♟️ Код Гиас',         harem:false },
+    { name:'Anisaoit',      pass:'yatonorag1',   char:'Ято',               fandom:'⚡ Бездомный Бог',   harem:false },
+    { name:'zuki_zukilop',  pass:'tsukumojjk1',  char:'Юки Цукумо',        fandom:'🔮 Маг. Битва',      harem:false },
+    { name:'mikoi3',        pass:'meninablch',   char:'Менина',            fandom:'⚔️ Блич',             harem:false },
+    { name:'cherrygirl46',  pass:'ladydmc2024',  char:'Леди',              fandom:'🔱 Devil May Cry',    harem:false },
+    { name:'tiffharam',     pass:'cloudff2024',  char:'Клауд',             fandom:'🌌 Final Fantasy 7',  harem:false },
+    { name:'ht807',         pass:'sayasong24',   char:'Сайя',              fandom:'🌸 Песнь Сайи',       harem:false },
+    { name:'MaMalaras_111', pass:'yuriglt2024',  char:'Юри (GLT)',         fandom:'🌸 GLT',              harem:false },
+    { name:'all_is333',     pass:'yuriyar2024',  char:'Юри (Клуб Яричин)', fandom:'🌸 Клуб Яричин',     harem:false },
+    { name:'UYOVINX',       pass:'olyabunny24',  char:'Оля',               fandom:'🌸 Тинни Банни',      harem:false },
+    { name:'p0zyrattel',    pass:'aikopnpn24',   char:'Айко Танака',       fandom:'🌸 Пунпун',           harem:false },
+    { name:'morganchloveu', pass:'melstroy24',   char:'Мелстрой',          fandom:'🌸 Другие',           harem:false },
 ];
 
-let currentUser = null;
+let CU = null, VU = null;
 
-// ============ STORAGE HELPERS ============
-function getPostsKey(name) { return 'lgel_posts_' + name; }
-function loadPosts(name) {
-    try { return JSON.parse(localStorage.getItem(getPostsKey(name)) || '[]'); } catch(e) { return []; }
-}
-function savePosts(name, posts) {
-    try { localStorage.setItem(getPostsKey(name), JSON.stringify(posts)); } catch(e){}
-}
+function pk(n){ return 'lgel3_' + n; }
+function lp(n){ try{ return JSON.parse(localStorage.getItem(pk(n))||'[]'); }catch(e){ return []; } }
+function sp(n,a){ try{ localStorage.setItem(pk(n), JSON.stringify(a)); }catch(e){} }
 
-// ============ INIT ============
-function init() {
-    buildHaremGrid();
-    buildPassTable();
-
-    document.getElementById('loginName').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-    document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-}
-
-function buildHaremGrid() {
-    const grid = document.getElementById('haremGrid');
-    const members = USERS.filter(u => u.harem && u.name !== 'yunochhka');
-    grid.innerHTML = members.map(u => `
-        <div class="harem-member-card" onclick="openMemberProfile('${u.name}')">
-            <div class="hm-avatar">${u.name[0].toUpperCase()}</div>
-            <div class="hm-name">@${u.name}</div>
-            <div class="hm-char">${u.char}</div>
-            <div class="hm-fandom">${u.fandom}</div>
-            <div class="hm-status">♡ В гареме</div>
-        </div>
-    `).join('');
-}
-
-function buildPassTable() {
-    const tbody = document.getElementById('passTable');
-    tbody.innerHTML = USERS.map(u => `
-        <tr>
-            <td class="pt-name">${u.name}</td>
-            <td class="pt-pass">${u.password}</td>
-            <td class="pt-char">${u.char}</td>
-        </tr>
-    `).join('');
-}
-
-// ============ LOGIN ============
-function openLogin() {
-    document.getElementById('loginModal').classList.add('active');
-    setTimeout(() => document.getElementById('loginName').focus(), 200);
-}
-function closeLogin() {
-    document.getElementById('loginModal').classList.remove('active');
-    document.getElementById('loginError').classList.remove('show');
-    document.getElementById('loginName').value = '';
-    document.getElementById('loginPass').value = '';
-}
-
-function doLogin() {
-    const name = document.getElementById('loginName').value.trim();
-    const pass = document.getElementById('loginPass').value;
-    const user = USERS.find(u => u.name === name && u.password === pass);
-    if (!user) {
-        document.getElementById('loginError').classList.add('show');
-        document.getElementById('loginPass').value = '';
-        return;
-    }
-    currentUser = user;
-    closeLogin();
-    openProfile(user);
-}
-
-function openMemberProfile(name) {
-    if (!currentUser) {
-        openLogin();
-        document.getElementById('loginName').value = name;
-        return;
-    }
-    if (currentUser.name !== name && currentUser.name !== 'famuliaf' && currentUser.name !== 'yunochhka') {
-        openProfile(currentUser);
-        return;
-    }
-    const user = USERS.find(u => u.name === name);
-    if (user) openProfile(user);
-}
-
-// ============ PROFILE ============
-function openProfile(user) {
-    document.getElementById('profileAvatar').textContent = user.name[0].toUpperCase();
-    document.getElementById('profileName').textContent = '@' + user.name;
-    document.getElementById('profileChar').textContent = '✦ ' + user.char;
-    document.getElementById('profileFandom').textContent = user.fandom;
-    document.getElementById('postText').value = '';
-    document.getElementById('charCount').textContent = '0';
-    document.getElementById('profile-page').classList.add('active');
-    document.body.style.overflow = 'hidden';
-    renderPosts(user.name);
-}
-
-function closeProfile() {
-    document.getElementById('profile-page').classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-function updateCount() {
-    const v = document.getElementById('postText').value;
-    document.getElementById('charCount').textContent = v.length;
-}
-
-function addPost() {
-    if (!currentUser) return;
-    const text = document.getElementById('postText').value.trim();
-    if (!text) return;
-    const posts = loadPosts(currentUser.name);
-    posts.unshift({ id: Date.now(), text, time: new Date().toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) });
-    savePosts(currentUser.name, posts);
-    document.getElementById('postText').value = '';
-    document.getElementById('charCount').textContent = '0';
-    renderPosts(currentUser.name);
-}
-
-function deletePost(id) {
-    if (!currentUser) return;
-    let posts = loadPosts(currentUser.name);
-    posts = posts.filter(p => p.id !== id);
-    savePosts(currentUser.name, posts);
-    renderPosts(currentUser.name);
-}
-
-function renderPosts(name) {
-    const feed = document.getElementById('postsFeed');
-    const posts = loadPosts(name);
-    const user = USERS.find(u => u.name === name);
-    const canDelete = currentUser && (currentUser.name === name || currentUser.name === 'famuliaf' || currentUser.name === 'yunochhka');
-
-    if (!posts.length) {
-        feed.innerHTML = '<div class="empty-posts">Здесь пока пусто. Напиши свой первый пост! 🌸</div>';
-        return;
-    }
-    feed.innerHTML = posts.map(p => `
-        <div class="post-card">
-            <div class="post-card-header">
-                <div class="post-card-avatar">${name[0].toUpperCase()}</div>
-                <div class="post-card-meta">
-                    <div class="post-card-name">@${name}</div>
-                    <div class="post-card-time">${p.time}</div>
-                </div>
-                ${canDelete ? `<button class="post-delete" onclick="deletePost(${p.id})">✕ удалить</button>` : ''}
-            </div>
-            <div class="post-card-body">${escapeHtml(p.text)}</div>
-        </div>
-    `).join('');
-}
-
-function escapeHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ============ STARS ============
+// ---- INIT ----
 (function(){
-    const cvs=document.getElementById('cvs'),ctx=cvs.getContext('2d');
-    let W,H,stars=[];
-    function resize(){W=cvs.width=innerWidth;H=cvs.height=innerHeight}
-    function mk(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*.9+.1,a:Math.random(),da:(Math.random()*.004+.0005)*(Math.random()<.5?1:-1),hue:Math.random()<.35?280+Math.random()*40:(Math.random()<.5?200+Math.random()*20:0)}}
-    function init(){resize();stars=Array.from({length:260},mk)}
-    function draw(){ctx.clearRect(0,0,W,H);stars.forEach(s=>{s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.hue===0?`rgba(255,255,255,${s.a*.85})`:`hsla(${s.hue},80%,80%,${s.a*.65})`;ctx.fill()});requestAnimationFrame(draw)}
-    window.addEventListener('resize',resize);init();draw();
+    buildHarem();
+    buildPT();
+    updNav();
+    ['lName','lPass'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); }));
 })();
 
-const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-
-function switchTab(btn,id){
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(id).classList.add('active');
+function buildHarem(){
+    const members = USERS.filter(u => u.harem);
+    const n = members.length;
+    document.getElementById('hCount').textContent = n + (n===1?' участник':n>1&&n<5?' участника':' участников');
+    const g = document.getElementById('hGrid');
+    if(!n){
+        g.innerHTML=`<div class="harem-empty"><div class="he-icon">🌸</div><p>Гарем пока пуст — <strong>набор открыт!</strong><br>Напиши @yunochhka, чтобы попасть в список избранных.</p></div>`;
+        return;
+    }
+    g.innerHTML = members.map(u=>`
+        <div class="harem-card" onclick="hClick('${u.name}')">
+            <div class="hc-av">${u.name[0].toUpperCase()}</div>
+            <div class="hc-name">@${u.name}</div>
+            <div class="hc-char">${u.char}</div>
+            <div class="hc-fandom">${u.fandom}</div>
+            <div class="hc-badge">♡ В гареме</div>
+        </div>`).join('');
 }
 
-document.getElementById('loginModal').addEventListener('click', function(e){ if(e.target===this) closeLogin(); });
+function buildPT(){
+    document.getElementById('ptBody').innerHTML = USERS.map(u=>`
+        <tr><td class="pt-n">${u.name}</td><td class="pt-p">${u.pass}</td><td class="pt-c">${u.char}</td></tr>`).join('');
+}
 
-init();
+function updNav(){
+    const a = document.getElementById('navAuth');
+    if(CU){
+        a.innerHTML=`<span class="nup" onclick="openOwnP()"><span class="nup-av">${CU.name[0].toUpperCase()}</span><span>@${CU.name}</span></span>`;
+    } else {
+        a.innerHTML=`<button class="nbtn nav-login" onclick="openLogin()">🔑 Войти</button>`;
+    }
+}
+
+// ---- LOGIN ----
+function openLogin(){ document.getElementById('loginModal').classList.add('active'); document.body.style.overflow='hidden'; setTimeout(()=>document.getElementById('lName').focus(),220); }
+function closeLogin(){ document.getElementById('loginModal').classList.remove('active'); document.body.style.overflow=''; document.getElementById('lErr').classList.remove('show'); document.getElementById('lName').value=''; document.getElementById('lPass').value=''; }
+
+function doLogin(){
+    const nm = document.getElementById('lName').value.trim();
+    const ps = document.getElementById('lPass').value;
+    const u = USERS.find(x => x.name.toLowerCase()===nm.toLowerCase() && x.pass===ps);
+    if(!u){ document.getElementById('lErr').classList.add('show'); document.getElementById('lPass').value=''; document.getElementById('lPass').focus(); return; }
+    CU = u; closeLogin(); updNav(); openProfile(u);
+}
+
+// ---- HAREM CLICK ----
+function hClick(name){
+    if(!CU){ openLogin(); return; }
+    const u = USERS.find(x=>x.name===name);
+    if(u) openProfile(u);
+}
+function openOwnP(){ if(CU) openProfile(CU); }
+
+// ---- PROFILE ----
+function openProfile(u){
+    VU = u;
+    document.getElementById('pAv').textContent = u.name[0].toUpperCase();
+    document.getElementById('pNm').textContent = '@' + u.name;
+    document.getElementById('pCh').textContent = '✦ ' + u.char;
+    document.getElementById('pFd').textContent = u.fandom;
+    document.getElementById('pHb').style.display = u.harem ? 'inline-flex' : 'none';
+
+    const isOwn = CU && CU.name === u.name;
+    const isAdmin = CU && (CU.name==='famuliaf'||CU.name==='yunochhka');
+    document.getElementById('comp').style.display = isOwn ? 'flex' : 'none';
+    document.getElementById('feedTtl').textContent = isOwn ? 'Мои посты' : 'Посты @'+u.name;
+
+    document.getElementById('compTa').value = '';
+    document.getElementById('ccEl').textContent = '0 / 500';
+    document.getElementById('profile-page').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderFeed(u, isOwn || isAdmin);
+}
+
+function closeProfile(){ document.getElementById('profile-page').classList.remove('active'); document.body.style.overflow=''; VU=null; }
+
+function updCC(){
+    const l = document.getElementById('compTa').value.length;
+    const el = document.getElementById('ccEl');
+    el.textContent = l + ' / 500';
+    el.className = 'cc' + (l>=490?' full':l>=380?' near':'');
+}
+
+function submitPost(){
+    if(!CU||!VU||CU.name!==VU.name) return;
+    const t = document.getElementById('compTa').value.trim();
+    if(!t) return;
+    const posts = lp(CU.name);
+    posts.unshift({ id:Date.now(), text:t, time: new Date().toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}) });
+    sp(CU.name, posts);
+    document.getElementById('compTa').value = '';
+    document.getElementById('ccEl').textContent = '0 / 500';
+    const isAdmin = CU.name==='famuliaf'||CU.name==='yunochhka';
+    renderFeed(VU, true);
+}
+
+function delPost(id, ownerName){
+    sp(ownerName, lp(ownerName).filter(p=>p.id!==id));
+    if(VU){
+        const isAdmin = CU&&(CU.name==='famuliaf'||CU.name==='yunochhka');
+        const canDel = (CU&&CU.name===VU.name)||isAdmin;
+        renderFeed(VU, canDel);
+    }
+}
+
+function renderFeed(u, canDel){
+    const f = document.getElementById('feed');
+    const posts = lp(u.name);
+    if(!posts.length){ f.innerHTML='<div class="feed-empty">Здесь пока пусто 🌸</div>'; return; }
+    f.innerHTML = posts.map(p=>`
+        <div class="post-card">
+            <div class="pch">
+                <div class="pc-av">${u.name[0].toUpperCase()}</div>
+                <div class="pc-m"><div class="pc-n">@${u.name}</div><div class="pc-t">${p.time}</div></div>
+                ${canDel?`<button class="pc-del" onclick="delPost(${p.id},'${u.name}')">✕</button>`:''}
+            </div>
+            <div class="pc-body">${esc(p.text)}</div>
+        </div>`).join('');
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ---- STARS ----
+(function(){
+    const c=document.getElementById('cvs'),x=c.getContext('2d');
+    let W,H,S=[];
+    const mk=()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*.8+.1,a:Math.random(),da:(Math.random()*.004+.0004)*(Math.random()<.5?1:-1),h:Math.random()<.35?280+Math.random()*40:(Math.random()<.5?200+Math.random()*20:0)});
+    const rsz=()=>{W=c.width=innerWidth;H=c.height=innerHeight};
+    function draw(){ x.clearRect(0,0,W,H); S.forEach(s=>{ s.a+=s.da; if(s.a>1||s.a<0)s.da*=-1; x.beginPath(); x.arc(s.x,s.y,s.r,0,Math.PI*2); x.fillStyle=s.h===0?`rgba(255,255,255,${s.a*.8})`:`hsla(${s.h},80%,80%,${s.a*.6})`; x.fill(); }); requestAnimationFrame(draw); }
+    window.addEventListener('resize',rsz); rsz(); S=Array.from({length:280},mk); draw();
+})();
+
+// ---- REVEAL ----
+new IntersectionObserver(e=>e.forEach(x=>{ if(x.isIntersecting){ x.target.classList.add('visible'); } }),{threshold:.1})
+    .observe(document.createElement('div'));
+const ro = new IntersectionObserver(e=>e.forEach(x=>{ if(x.isIntersecting){ x.target.classList.add('visible'); ro.unobserve(x.target); } }),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+function stab(b,id){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    b.classList.add('active'); document.getElementById(id).classList.add('active');
+}
 </script>
 </body>
 </html>
