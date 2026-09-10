@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>флуд 🐻</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111215;
+    --surface: #17181d;
+    --card: #1c1d23;
+    --border: #2a2b34;
+    --text: #d8d5cc;
+    --muted: #5a5867;
+    --dim: #3a3848;
+    --teal: #6eb8a4;
+    --peach: #d4866a;
+    --gold: #c9a96e;
+    --lavender: #9b8ec4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    height: 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    gap: 32px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+  .tb-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+  .tb-sep { width: 1px; height: 22px; background: var(--border); }
+  .tb-nav { display: flex; gap: 4px; flex: 1; overflow-x: auto; }
+  .tb-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.83rem;
+    font-weight: 400;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+  .tb-btn:hover { color: var(--text); background: var(--card); }
+  .tb-btn.active { color: var(--teal); background: rgba(110,184,164,0.08); }
+
+  .tb-admin {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tb-admin span { color: var(--lavender); margin-left: 4px; }
+
+  /* CONTENT */
+  .content {
+    flex: 1;
+    max-width: 740px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 44px 24px 60px;
+  }
+
+  .section { display: none; animation: reveal 0.25s ease; }
+  .section.active { display: block; }
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pg-head {
+    margin-bottom: 32px;
+  }
+  .pg-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .pg-line {
+    width: 36px;
+    height: 2px;
+    background: var(--teal);
+    border-radius: 2px;
+    margin-top: 10px;
+  }
+
+  /* HOME */
+  .hw {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 32px;
+    max-width: 460px;
+  }
+  .hw em { color: var(--peach); font-style: normal; }
+
+  .cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .mini-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .mini-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--teal);
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+  .mini-lbl { font-size: 0.72rem; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
+
+  .event-list { display: flex; flex-direction: column; gap: 1px; }
+  .event-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 13px 18px;
+    font-size: 0.87rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .event-row .ev-date { color: var(--gold); font-weight: 500; min-width: 80px; font-size: 0.82rem; }
+  .event-row .ev-dot { color: var(--muted); }
+
+  /* FANDOMS */
+  .fd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fd-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: border-color 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .fd-card:hover { border-color: var(--teal); }
+  .fd-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .fd-info {}
+  .fd-title { font-size: 0.9rem; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .fd-char { font-size: 0.79rem; color: var(--teal); }
+
+  /* RULES */
+  .rl-list { display: flex; flex-direction: column; gap: 2px; }
+  .rl-row {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 4px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    transition: background 0.12s;
+    border-radius: 6px;
+  }
+  .rl-row:hover { background: rgba(255,255,255,0.02); }
+  .rl-n {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--dim);
+    min-width: 24px;
+    padding-top: 1px;
+  }
+  .rl-body { flex: 1; }
+  .rl-txt { font-size: 0.88rem; color: var(--text); line-height: 1.65; }
+  .rl-penalty { margin-top: 5px; font-size: 0.74rem; color: var(--peach); letter-spacing: 0.4px; }
+
+  /* BDAYS */
+  .bd-list { display: flex; flex-direction: column; }
+  .bd-month {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .bd-month:last-child { border-bottom: none; }
+  .bd-mname {
+    font-size: 0.74rem;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    min-width: 96px;
+    font-weight: 500;
+  }
+  .bd-entries { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+  .bd-tag {
+    background: rgba(110,184,164,0.07);
+    border: 1px solid rgba(110,184,164,0.18);
+    border-radius: 6px;
+    padding: 4px 11px;
+    font-size: 0.82rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bd-tag .bd-d { color: var(--gold); font-size: 0.77rem; font-weight: 500; }
+  .bd-empty { font-size: 0.82rem; color: var(--dim); }
+
+  /* ROLES */
+  .roles-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px;
+    max-width: 380px;
+  }
+  .roles-wrap .r-bear { font-size: 2rem; margin-bottom: 16px; }
+  .roles-wrap p { font-size: 0.88rem; color: var(--muted); line-height: 1.9; margin-bottom: 22px; }
+  .r-admins { display: flex; flex-direction: column; gap: 8px; }
+  .r-adm {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    color: var(--lavender);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 560px) {
+    .fd-grid { grid-template-columns: 1fr; }
+    .cards-row { grid-template-columns: 1fr 1fr; }
+    .tb-admin { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-logo">🐻 флуд</div>
+  <div class="tb-sep"></div>
+  <div class="tb-nav">
+    <button class="tb-btn active" onclick="show('home',this)">главная</button>
+    <button class="tb-btn" onclick="show('fandoms',this)">фандомы</button>
+    <button class="tb-btn" onclick="show('rules',this)">правила</button>
+    <button class="tb-btn" onclick="show('bdays',this)">дни рождения</button>
+    <button class="tb-btn" onclick="show('roles',this)">роли</button>
+  </div>
+  <div class="tb-admin">адм: <span>@masskitn</span> <span>@Kyshan_ko</span></div>
+</div>
+
+<div class="content">
+
+  <!-- HOME -->
+  <div id="s-home" class="section active">
+    <div class="pg-head">
+      <div class="pg-title">добро пожаловать</div>
+      <div class="pg-line"></div>
+    </div>
+    <p class="hw">ребятушки, солнышки, если вы заходите с друзьями — пожалуйста общайтесь и с другими <em>❤️</em></p>
+    <div class="cards-row">
+      <div class="mini-card"><div class="mini-num">65</div><div class="mini-lbl">норма / нед.</div></div>
+      <div class="mini-card"><div class="mini-num">10</div><div class="mini-lbl">фандомов</div></div>
+      <div class="mini-card"><div class="mini-num">10</div><div class="mini-lbl">правил</div></div>
+    </div>
+    <div class="event-list">
+      <div class="event-row"><span class="ev-date">10 марта</span><span class="ev-dot">·</span>🎂 день рождения Реджины</div>
+      <div class="event-row"><span class="ev-date">14 марта</span><span class="ev-dot">·</span>🎮 начало еженедельных интерактивов</div>
+      <div class="event-row"><span class="ev-date">21 марта</span><span class="ev-dot">·</span>🧹 начало чисток (раз в неделю)</div>
+    </div>
+    <p style="margin-top:20px; font-size:0.82rem; color:var(--muted);">рест берём у <span style="color:var(--lavender)">@masskitn</span></p>
+  </div>
+
+  <!-- FANDOMS -->
+  <div id="s-fandoms" class="section">
+    <div class="pg-head"><div class="pg-title">фандомы</div><div class="pg-line"></div></div>
+    <div class="fd-grid">
+      <div class="fd-card"><div class="fd-icon">😛</div><div class="fd-info"><div class="fd-title">Великий из бродячих псов</div><div class="fd-char">Тэтте Суэхиро</div></div></div>
+      <div class="fd-card"><div class="fd-icon">🗼</div><div class="fd-info"><div class="fd-title">Блю Лок</div><div class="fd-char">Шидо</div></div></div>
+      <div class="fd-card"><div class="fd-icon">🏝️</div><div class="fd-info"><div class="fd-title">Остров Эпштейна</div><div class="fd-char">Эпштейн</div></div></div>
+      <div class="fd-card"><div class="fd-icon">🏎️</div><div class="fd-info"><div class="fd-title">Формула-1</div><div class="fd-char">Данил Квят</div></div></div>
+      <div class="fd-card"><div class="fd-icon">🦐</div><div class="fd-info"><div class="fd-title">Еда</div><div class="fd-char">Креветка</div></div></div>
+      <div class="fd-card"><div class="fd-icon">⚔️</div><div class="fd-info"><div class="fd-title">История</div><div class="fd-char">Наполеон Бонапарт, Александр Македонский</div></div></div>
+      <div class="fd-card"><div class="fd-icon">👑</div><div class="fd-info"><div class="fd-title">Дряные девчонки</div><div class="fd-char">Реджина</div></div></div>
+      <div class="fd-card"><div class="fd-icon">⚡</div><div class="fd-info"><div class="fd-title">Блич</div><div class="fd-char">Йоруичи</div></div></div>
+      <div class="fd-card"><div class="fd-icon">🐾</div><div class="fd-info"><div class="fd-title">Чиикава</div><div class="fd-char">Чиикава</div></div></div>
+      <div class="fd-card"><div class="fd-icon">😈</div><div class="fd-info"><div class="fd-title">Helltaker</div><div class="fd-char">Люцифер</div></div></div>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div id="s-rules" class="section">
+    <div class="pg-head"><div class="pg-title">правила</div><div class="pg-line"></div></div>
+    <div class="rl-list">
+      <div class="rl-row"><div class="rl-n">1</div><div class="rl-body"><div class="rl-txt">Никакого спама — не более 5 одинаковых сообщений за раз</div><div class="rl-penalty">мут · предупреждение · кик</div></div></div>
+      <div class="rl-row"><div class="rl-n">2</div><div class="rl-body"><div class="rl-txt">Реклама своего/чужого флуда, ролевых, товаров и т.п.</div><div class="rl-penalty">кик · предупреждение</div></div></div>
+      <div class="rl-row"><div class="rl-n">3</div><div class="rl-body"><div class="rl-txt">Норма — 65 сообщений в неделю. Чистки с 21.03.26, раз в неделю.<br><span style="color:var(--muted); font-size:0.85em;">50–64 соо → предупреждение &nbsp;·&nbsp; менее 50 → кик / бан</span></div></div></div>
+      <div class="rl-row"><div class="rl-n">4</div><div class="rl-body"><div class="rl-txt">Колл делают только администраторы</div><div class="rl-penalty">предупреждение</div></div></div>
+      <div class="rl-row"><div class="rl-n">5</div><div class="rl-body"><div class="rl-txt">Политика, расчленёнка, зоопорн и т.п. запрещено. Контент 18+ — под спойлер или в меру.</div><div class="rl-penalty">мут · предупреждение · кик</div></div></div>
+      <div class="rl-row"><div class="rl-n">6</div><div class="rl-body"><div class="rl-txt">Уважайте участников и администрацию. Оскорбления допустимы только если это очевидный рофл.</div></div></div>
+      <div class="rl-row"><div class="rl-n">7</div><div class="rl-body"><div class="rl-txt">1–2 раза в неделю проводятся интерактивы, начиная с 14.03.26. Мафия — по желанию.</div></div></div>
+      <div class="rl-row"><div class="rl-n">8</div><div class="rl-body"><div class="rl-txt">Если участник менее 4 дней во флуде — чистка на него не распространяется.</div></div></div>
+      <div class="rl-row"><div class="rl-n">9</div><div class="rl-body"><div class="rl-txt">При выходе из флуда укажите свою роль и причину (по желанию).</div></div></div>
+      <div class="rl-row"><div class="rl-n">10</div><div class="rl-body"><div class="rl-txt">Голосовые и видеосообщения разрешены ✅</div></div></div>
+    </div>
+  </div>
+
+  <!-- BIRTHDAYS -->
+  <div id="s-bdays" class="section">
+    <div class="pg-head"><div class="pg-title">дни рождения</div><div class="pg-line"></div></div>
+    <div class="bd-list">
+      <div class="bd-month"><div class="bd-mname">Январь</div><div class="bd-entries"><span class="bd-empty">—</span></div></div>
+      <div class="bd-month"><div class="bd-mname">Февраль</div><div class="bd-entries"><span class="bd-empty">—</span></div></div>
+      <div class="bd-month"><div class="bd-mname">Март</div><div class="bd-entries"><div class="bd-tag">🎂 <span class="bd-d">10</span> Реджина</div></div></div>
+      <div class="bd-month"><div class="bd-mname">Апрель</div><div class="bd-entries"><span class="bd-empty">—</span></div></div>
+      <div class="bd-month"><div class="bd-mname">Май</div><div class="bd-entries"><span class="bd-empty">—</span></div></div>
+      <div class="bd-month"><div class="bd-mname">Июнь</div><div class="bd-entries"><span class="bd-empty">—</span></div></div>
+      <div class="bd-month"><div class="bd-mname">Июль</div><div class="bd-entries"><span class="bd-empty">—</span></div></div>
+      <div class="bd-month"><div class="bd-mname">Август</div><div class="bd-entries"><div class="bd-tag">🎂 <span class="bd-d">1</span> Данил Квят</div></div></div>
+      <div class="bd-month"><div class="bd-mname">Сентябрь</div><div class="bd-entries"><div class="bd-tag">🎂 <span class="bd-d">21</span> Наполеон Бонапарт</div><div class="bd-tag">🎂 <span class="bd-d">30</span> Шидо Рюсей</div></div></div>
+      <div class="bd-month"><div class="bd-mname">Октябрь</div><div class="bd-entries"><span class="bd-empty">—</span></div></div>
+      <div class="bd-month"><div class="bd-mname">Ноябрь</div><div class="bd-entries"><div class="bd-tag">🎂 <span class="bd-d">5</span> Креветка</div></div></div>
+      <div class="bd-month"><div class="bd-mname">Декабрь</div><div class="bd-entries"><div class="bd-tag">🎂 <span class="bd-d">17</span> Тэтте Суэхиро</div><div class="bd-tag">🎂 <span class="bd-d">23</span> Эпштейн</div></div></div>
+    </div>
+  </div>
+
+  <!-- ROLES -->
+  <div id="s-roles" class="section">
+    <div class="pg-head"><div class="pg-title">роли</div><div class="pg-line"></div></div>
+    <div class="roles-wrap">
+      <div class="r-bear">🐻</div>
+      <p>Роли выдаёт администрация.<br>Рест берём у <span style="color:var(--lavender)">@masskitn</span><br><br>Вопросы? Пишите в лс 😶</p>
+      <div class="r-admins">
+        <div class="r-adm">@masskitn</div>
+        <div class="r-adm">@Kyshan_ko</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function show(name, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tb-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('s-' + name).classList.add('active');
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>
