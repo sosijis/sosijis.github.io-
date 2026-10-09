@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренажёр по биологии</title>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #d9d9d9;
+    --card: #fbfcf8;
+    --text: #22223a;
+    --muted: #707a8a;
+    --opt: #efedfb;
+    --opt-hover: #e4e0f8;
+    --opt-sel: #dcd6fb;
+    --ring: #a9b3c1;
+    --accent: #4d8ef0;
+    --accent-dis: #bcd3fb;
+    --nav: #6f86a8;
+    --ok: #dff3e2;
+    --ok-b: #3aa55a;
+    --bad: #fbe2e2;
+    --bad-b: #d64545;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15171c; --card: #1f2229; --text: #e8e9ee; --muted: #9aa3b2;
+      --opt: #2a2840; --opt-hover: #343150; --opt-sel: #403b66; --ring: #6b7487;
+      --accent: #5b9bf5; --accent-dis: #2f4466; --nav: #51617d;
+      --ok: #1f3a27; --bad: #42242a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Golos Text", system-ui, sans-serif;
+    min-height: 100vh; display: flex; justify-content: center;
+  }
+  .wrap { width: 100%; max-width: 560px; padding: 16px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .lang { background: var(--opt); border-radius: 10px; padding: 10px 16px; font-size: 15px; }
+  .timer { color: var(--muted); font-size: 15px; }
+  .card {
+    background: var(--card); border-radius: 14px; padding: 28px 18px 24px;
+    min-height: 70vh; display: flex; flex-direction: column;
+  }
+  h2 { font-size: 26px; margin: 0 0 28px; font-weight: 700; }
+  .q { font-size: 18px; line-height: 1.9; margin-bottom: 18px; }
+  .pic { display: flex; justify-content: center; gap: 10px; font-size: 64px; margin: 6px 0 22px; flex-wrap: wrap; }
+  .opt {
+    display: flex; gap: 16px; align-items: center; background: var(--opt);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; cursor: pointer;
+    font-size: 20px; line-height: 1.4; border: 2px solid transparent; transition: background .15s;
+  }
+  .opt:hover { background: var(--opt-hover); }
+  .opt.sel { background: var(--opt-sel); }
+  .opt.ok { background: var(--ok); border-color: var(--ok-b); }
+  .opt.bad { background: var(--bad); border-color: var(--bad-b); }
+  .mark {
+    flex: none; width: 34px; height: 34px; border: 2px solid var(--ring); background: var(--card);
+    display: grid; place-items: center;
+  }
+  .radio .mark { border-radius: 50%; }
+  .check .mark { border-radius: 6px; }
+  .opt.sel .mark { border-color: var(--accent); }
+  .radio .opt.sel .mark::after { content: ""; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); }
+  .check .opt.sel .mark { background: var(--accent); }
+  .check .opt.sel .mark::after { content: "✓"; color: #fff; font-size: 20px; }
+  .hint { text-align: center; color: var(--muted); font-size: 15px; margin: 24px 0 14px; }
+  .btn {
+    width: 100%; border: 0; border-radius: 12px; padding: 18px; font-size: 19px;
+    font-family: inherit; color: #fff; background: var(--accent); cursor: pointer;
+  }
+  .btn:disabled { background: var(--accent-dis); cursor: default; }
+  .explain { margin-top: 14px; font-size: 16px; line-height: 1.5; color: var(--muted); }
+  .nav { display: flex; justify-content: space-between; margin-top: auto; padding-top: 22px; }
+  .arrow {
+    width: 58px; height: 58px; border-radius: 50%; border: 0; background: var(--nav);
+    color: #fff; font-size: 30px; cursor: pointer; display: grid; place-items: center;
+  }
+  .arrow:disabled { opacity: .35; cursor: default; }
+  .center { text-align: center; margin: auto 0; }
+  .center h3 { font-size: 26px; margin: 0 0 18px; }
+  .center p { font-size: 19px; line-height: 1.7; }
+  .dots { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .dot { width: 30px; height: 30px; border-radius: 8px; background: var(--opt); font-size: 13px; display: grid; place-items: center; cursor: pointer; }
+  .dot.done { background: var(--opt-sel); }
+  .dot.cur { outline: 2px solid var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="lang">Рус ⌄</div><div class="timer" id="timer"></div></div>
+  <div class="dots" id="dots"></div>
+  <div class="card" id="card"></div>
+</div>
+
+<script>
+// Тренировочные вопросы в формате олимпиады (свои, не из реального тура)
+const QUESTIONS = [
+  { block: 1, text: "Почему ягоды рябины после первых заморозков становятся слаще?",
+    pic: "🍒❄️",
+    opts: ["Мороз убивает бактерии на поверхности ягод",
+           "Часть крахмала и горьких веществ распадается, доля сахаров растёт",
+           "Ягоды впитывают воду из снега",
+           "В ягодах начинается фотосинтез"],
+    ans: [1], why: "При низких температурах ферменты расщепляют горький гликозид и крахмал, сахаров становится больше." },
+  { block: 1, text: "Какой способ распространения плодов характерен для лопуха?",
+    pic: "🌰🐕",
+    opts: ["Анемохория", "Гидрохория", "Зоохория", "Автохория"],
+    ans: [2], why: "Соплодия с крючочками цепляются за шерсть животных — это зоохория (эпизоохория)." },
+  { block: 1, text: "Рыбы-прилипалы прикрепляются к акулам и подбирают остатки их добычи, не причиняя им вреда. Как называется такой тип отношений?",
+    pic: "🦈🐟",
+    opts: ["Паразитизм", "Комменсализм", "Хищничество", "Конкуренция"],
+    ans: [1], why: "Одному организму польза, другому — ни пользы, ни вреда: комменсализм." },
+  { block: 1, text: "Выберите верную характеристику обоих изображённых животных:",
+    pic: "🦋🐞",
+    opts: ["Имеют ротовой аппарат грызущего типа во взрослом состоянии",
+           "Развиваются с полным превращением",
+           "Относятся к одному отряду",
+           "Не способны летать"],
+    ans: [1], why: "И бабочки, и жуки проходят стадии яйцо → личинка → куколка → имаго." },
+  { block: 1, text: "У найденного черепа большие клыки, острые режущие хищнические зубы и нет диастемы. Кому он скорее всего принадлежал?",
+    pic: "💀",
+    opts: ["Зайцу", "Бобру", "Лисице", "Корове"],
+    ans: [2], why: "Развитые клыки и хищнические зубы — признак отряда Хищные." },
+  { block: 1, text: "Чем глаз человека принципиально отличается от фасеточного глаза насекомого?",
+    pic: "👁️🪰",
+    opts: ["Глаз человека состоит из множества омматидиев",
+           "В глазу человека хрусталик фокусирует всё изображение на сетчатке",
+           "Глаз человека различает ультрафиолет",
+           "Глаз человека даёт мозаичное изображение"],
+    ans: [1], why: "Камерный глаз собирает изображение одной линзой; фасеточный — мозаикой из омматидиев." },
+  { block: 1, text: "Какое растение издавна использовали для получения синей краски?",
+    pic: "🌿🔵",
+    opts: ["Крапива", "Вайда красильная", "Сахарная свёкла", "Папирус"],
+    ans: [1], why: "Из вайды (как и из индигоноски) получали индиго." },
+  { block: 1, text: "С каким учёным связано открытие фагоцитоза?",
+    pic: "🔬",
+    opts: ["И. П. Павлов", "И. И. Мечников", "К. А. Тимирязев", "Д. И. Ивановский"],
+    ans: [1], why: "Мечников открыл фагоцитоз и получил Нобелевскую премию (1908)." },
+  { block: 1, text: "Представители скольких семейств показаны на рисунке?",
+    pic: "🌻🌼🌹🍓",
+    opts: ["1", "2", "3", "4"],
+    ans: [1], why: "Подсолнечник и ромашка — Астровые; роза и земляника — Розоцветные. Итого 2." },
+  { block: 2, text: "Выберите верные утверждения о строении цветка:",
+    pic: "🌷",
+    opts: ["Тычинка состоит из пыльника и тычиночной нити",
+           "Пестик образуется из лепестков",
+           "Из завязи пестика развивается плод",
+           "Венчик образован чашелистиками",
+           "Семязачатки находятся в завязи"],
+    ans: [0, 2, 4], why: "Пестик — из плодолистиков, венчик — из лепестков." },
+  { block: 2, text: "Выберите верные утверждения о строении ноги насекомого:",
+    pic: "🦗",
+    opts: ["Ближайший к телу членик — тазик",
+           "Бедро расположено между вертлугом и голенью",
+           "Лапка состоит из одного членика",
+           "У прыгающих насекомых часто утолщено бедро задних ног",
+           "Вертлуг — самый длинный членик ноги"],
+    ans: [0, 1, 3], why: "Порядок: тазик → вертлуг → бедро → голень → лапка (из нескольких члеников)." },
+  { block: 2, text: "Выберите верные утверждения о голубе:",
+    pic: "🕊️",
+    opts: ["Имеет киль на грудине",
+           "Теплокровное животное",
+           "Сердце трёхкамерное",
+           "Имеет воздушные мешки",
+           "Зубы есть на обеих челюстях"],
+    ans: [0, 1, 3], why: "У птиц четырёхкамерное сердце и нет зубов." },
+  { block: 2, text: "Выберите верные утверждения о зубах млекопитающих:",
+    pic: "🦷",
+    opts: ["У слонов бивни — видоизменённые резцы",
+           "У зайцеобразных резцы растут всю жизнь",
+           "У всех млекопитающих зубы одинаковые",
+           "Эмаль — самая твёрдая ткань организма",
+           "У китов-полосатиков много крупных зубов"],
+    ans: [0, 1, 3], why: "У большинства зубы дифференцированы; у полосатиков вместо зубов — китовый ус." },
+];
+
+const TOTAL_MIN = 80;
+const state = { i: -1, sel: QUESTIONS.map(() => []), saved: QUESTIONS.map(() => null), shownBlock: 0 };
+const end = Date.now() + TOTAL_MIN * 60000;
+const card = document.getElementById("card");
+
+function tick() {
+  const left = Math.max(0, Math.ceil((end - Date.now()) / 60000));
+  document.getElementById("timer").textContent = `Осталось ${left} минут`;
+}
+setInterval(tick, 5000); tick();
+
+function dots() {
+  const d = document.getElementById("dots");
+  d.innerHTML = "";
+  QUESTIONS.forEach((q, k) => {
+    const el = document.createElement("div");
+    el.className = "dot" + (state.saved[k] ? " done" : "") + (k === state.i ? " cur" : "");
+    el.textContent = k + 1;
+    el.onclick = () => { state.i = k; render(); };
+    d.appendChild(el);
+  });
+}
+
+function intro(block) {
+  const multi = block === 2;
+  card.innerHTML = `
+    <div class="center">
+      <h3>Блок ${block}</h3>
+      <p>В заданиях этого блока нужно выбрать <b>${multi ? "все" : "один"}</b>
+      верны${multi ? "е ответы" : "й ответ"} из списка.</p>
+    </div>
+    <button class="btn" id="go">Вперёд</button>`;
+  document.getElementById("go").onclick = () => { state.i++; state.shownBlock = block; render(); };
+}
+
+function results() {
+  let score = 0;
+  QUESTIONS.forEach((q, k) => {
+    const s = [...state.sel[k]].sort().join(), a = [...q.ans].sort().join();
+    if (state.saved[k] && s === a) score++;
+  });
+  card.innerHTML = `
+    <div class="center">
+      <h3>Тренировка завершена</h3>
+      <p>Верно: <b>${score}</b> из ${QUESTIONS.length}</p>
+      <p style="font-size:16px;color:var(--muted)">Нажмите на номер задания сверху, чтобы посмотреть разбор.</p>
+    </div>
+    <button class="btn" id="again">Пройти заново</button>`;
+  document.getElementById("again").onclick = () => location.reload();
+  dots();
+}
+
+function render() {
+  if (state.i < 0) { intro(1); dots(); return; }
+  if (state.i >= QUESTIONS.length) { results(); return; }
+  const q = QUESTIONS[state.i];
+  if (q.block > state.shownBlock) { state.i--; intro(q.block); return; }
+  const multi = q.block === 2, saved = state.saved[state.i];
+  const sel = state.sel[state.i];
+  card.className = "card " + (multi ? "check" : "radio");
+  card.innerHTML = `
+    <h2>№ ${state.i + 1}</h2>
+    <div class="q">${q.text}</div>
+    <div class="pic">${q.pic}</div>
+    <div id="opts"></div>
+    <div class="hint">Ответ можно сохранять несколько раз</div>
+    <button class="btn" id="save" ${sel.length ? "" : "disabled"}>Сохранить ответ</button>
+    ${saved ? `<div class="explain">💡 ${q.why}</div>` : ""}
+    <div class="nav">
+      <button class="arrow" id="prev" ${state.i === 0 ? "disabled" : ""}>‹</button>
+      <button class="arrow" id="next">›</button>
+    </div>`;
+  const box = document.getElementById("opts");
+  q.opts.forEach((t, k) => {
+    const el = document.createElement("div");
+    let cls = "opt" + (sel.includes(k) ? " sel" : "");
+    if (saved) cls += q.ans.includes(k) ? " ok" : (sel.includes(k) ? " bad" : "");
+    el.className = cls;
+    el.innerHTML = `<span class="mark"></span><span>${t}</span>`;
+    el.onclick = () => {
+      if (multi) {
+        const p = sel.indexOf(k);
+        p >= 0 ? sel.splice(p, 1) : sel.push(k);
+      } else { sel.length = 0; sel.push(k); }
+      state.saved[state.i] = null;
+      render();
+    };
+    box.appendChild(el);
+  });
+  document.getElementById("save").onclick = () => { state.saved[state.i] = true; render(); };
+  document.getElementById("prev").onclick = () => { state.i--; render(); };
+  document.getElementById("next").onclick = () => { state.i++; render(); };
+  dots();
+}
+render();
+</script>
+</body>
+</html>
